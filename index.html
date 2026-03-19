@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#00f3ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RUCHK DUVI</title>
+
+<!-- ══ PWA MANIFEST ══ -->
+<link rel="manifest" href="/RUCK-DUVI/manifest.json">
+
+<!-- ══ PWA ICONS — inline SVG as PNG-equivalent data URIs ══ -->
+<link rel="icon" type="image/png" href="/RUCK-DUVI/icon.png">
+<link rel="apple-touch-icon" href="/RUCK-DUVI/icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── THEMES ── */
+:root {
+  --primary-bg:#f5f5f5;--secondary-bg:#ffffff;--text-color:#333333;
+  --primary-color:#007bff;--primary-hover:#0056b3;--secondary-color:#6c757d;
+  --secondary-hover:#5a6268;--correct-color:#28a745;--incorrect-color:#dc3545;
+  --hint-color:#ffc107;--border-color:#dddddd;--border-radius:8px;
+  --box-shadow:0 4px 6px rgba(0,0,0,.1);--accent-glow:0 0 5px rgba(0,123,255,.5);
+}
+[data-theme="dark"]{
+  --primary-bg:#050505;--secondary-bg:#111111;--text-color:#e0e0e0;
+  --primary-color:#00f3ff;--primary-hover:#00d8ff;--secondary-color:#ff00ff;
+  --secondary-hover:#d800ff;--correct-color:#00ff41;--incorrect-color:#ff003c;
+  --hint-color:#ffae00;--border-color:#333;--box-shadow:0 0 15px rgba(0,243,255,.2);
+  --accent-glow:0 0 10px var(--primary-color);
+}
+[data-theme="cyberpunk"]{
+  --primary-bg:#000000;--secondary-bg:#1a1a1a;--text-color:#fcee0a;
+  --primary-color:#fcee0a;--primary-hover:#d4c800;--secondary-color:#00f3ff;
+  --secondary-hover:#00d8ff;--correct-color:#39ff14;--incorrect-color:#ff003c;
+  --hint-color:#ff00ff;--border-color:#fcee0a;--box-shadow:0 0 15px rgba(252,238,10,.3);
+  --accent-glow:0 0 15px var(--primary-color);
+}
+[data-theme="matrix"]{
+  --primary-bg:#000000;--secondary-bg:#000d00;--text-color:#00ff41;
+  --primary-color:#00ff41;--primary-hover:#00cc33;--secondary-color:#003300;
+  --secondary-hover:#004400;--correct-color:#00ff41;--incorrect-color:#ff0000;
+  --hint-color:#008f11;--border-color:#003b00;--box-shadow:0 0 10px rgba(0,255,65,.2);
+  --accent-glow:0 0 10px var(--primary-color);
+}
+[data-theme="retro"]{
+  --primary-bg:#2b2b2b;--secondary-bg:#3c3c3c;--text-color:#ff9d00;
+  --primary-color:#ff9d00;--primary-hover:#e68e00;--secondary-color:#8b4513;
+  --secondary-hover:#a0522d;--correct-color:#9acd32;--incorrect-color:#cd5c5c;
+  --hint-color:#daa520;--border-color:#4b4b4b;--box-shadow:0 4px 10px rgba(0,0,0,.3);
+  --accent-glow:0 0 8px var(--primary-color);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;height:-webkit-fill-available;font-family:'Poppins',sans-serif;
+  background-color:var(--primary-bg);color:var(--text-color);transition:background-color .3s,color .3s;overflow:hidden}
+#app-container{width:100%;height:100%;height:100dvh;min-height:-webkit-fill-available;display:flex;flex-direction:column}
+
+/* ── NAVBAR ── */
+#navbar{display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;
+  background-color:rgba(5,5,5,.95);border-bottom:1px solid var(--primary-color);
+  box-shadow:0 0 10px rgba(0,243,255,.3);position:fixed;top:0;left:0;right:0;z-index:1000;height:64px}
+.nav-controls{display:flex;align-items:center;gap:.75rem}
+.theme-toggle,.menu-toggle{background:none;border:none;color:var(--primary-color);cursor:pointer;
+  width:40px;height:40px;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.theme-toggle svg{width:24px;height:24px}
+.theme-toggle .moon{display:none}
+[data-theme="dark"] .theme-toggle .sun{display:none}
+[data-theme="dark"] .theme-toggle .moon{display:block}
+[data-theme="cyberpunk"] .theme-toggle .sun{display:none}
+[data-theme="cyberpunk"] .theme-toggle .moon{display:block;color:#fcee0a}
+[data-theme="matrix"] .theme-toggle .sun{display:none}
+[data-theme="matrix"] .theme-toggle .moon{display:block;color:#00ff41}
+[data-theme="retro"] .theme-toggle .sun{display:none}
+[data-theme="retro"] .theme-toggle .moon{display:block;color:#ff9d00}
+.menu-toggle{flex-direction:column;gap:5px}
+.menu-toggle span{width:24px;height:2px;background-color:var(--primary-color);transition:all .3s}
+.menu-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.menu-toggle.open span:nth-child(2){opacity:0}
+.menu-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+#pomodoro-nav{display:flex;align-items:center;gap:.5rem;font-family:'Orbitron',sans-serif;font-size:.85rem;
+  color:var(--primary-color);background:rgba(0,243,255,.08);padding:4px 10px;border-radius:20px;
+  border:1px solid rgba(0,243,255,.3)}
+#pomodoro-nav-toggle{background:none;border:none;color:var(--primary-color);cursor:pointer;display:flex;align-items:center}
+#pomodoro-nav-toggle svg{width:16px;height:16px}
+.logo{display:flex;align-items:center;gap:.5rem;cursor:pointer;position:relative;overflow:visible}
+.app-title{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;
+  color:var(--primary-color);text-shadow:0 0 5px var(--primary-color)}
+.logo-particle{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none}
+
+/* ── SIDE MENU ── */
+.side-menu{position:fixed;top:64px;left:-300px;width:250px;height:calc(100% - 64px);
+  background:rgba(8,8,8,.98);border-right:1px solid var(--primary-color);
+  transition:left .3s ease-in-out;padding:2rem 0;z-index:999;overflow-y:auto}
+.side-menu.open{left:0}
+.side-menu ul{list-style:none}
+.side-menu ul li a{display:block;padding:1rem 2rem;color:var(--text-color);text-decoration:none;
+  font-family:'Orbitron',sans-serif;text-transform:uppercase;font-size:.85rem;letter-spacing:1px;transition:all .2s}
+.side-menu ul li a:hover{background:rgba(0,243,255,.05)}
+.side-menu ul li a.active{color:var(--primary-color);background:rgba(0,243,255,.1);border-left:4px solid var(--primary-color)}
+.menu-credits{padding:1.5rem 2rem;border-top:1px solid var(--border-color);margin-top:1rem}
+.menu-credits p{font-size:.7rem;opacity:.5;margin-bottom:.5rem;line-height:1.4}
+.coffee-btn{display:inline-flex;align-items:center;gap:.4rem;background:#1d70b8;color:#fff;
+  border:none;padding:.5rem 1rem;border-radius:20px;font-size:.75rem;cursor:pointer;
+  text-decoration:none;font-weight:600;transition:all .2s}
+.coffee-btn:hover{background:#155a9a;transform:scale(1.05)}
+
+/* ── MAIN APP ── */
+#app{flex-grow:1;display:flex;justify-content:center;padding:1rem;padding-top:80px;
+  width:100%;overflow-y:auto;min-height:0}
+.main-content{width:100%;max-width:1000px;background-color:var(--secondary-bg);
+  border-radius:8px;padding:1.5rem;overflow-y:auto;max-height:calc(100dvh - 90px)}
+
+/* ── CARDS ── */
+.card{background:linear-gradient(145deg,#1a1a1a,#0a0a0a);border:1px solid rgba(0,243,255,.1);
+  box-shadow:5px 5px 15px rgba(0,0,0,.8);border-radius:var(--border-radius);padding:1.5rem;
+  margin-bottom:1.5rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--primary-color),transparent);
+  animation:scanline 3s linear infinite;opacity:.3}
+@keyframes scanline{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ── BUTTONS ── */
+.btn-primary{background:linear-gradient(90deg,var(--primary-color),#0088ff);color:#000;
+  font-family:'Orbitron',sans-serif;text-transform:uppercase;letter-spacing:2px;border:none;
+  box-shadow:var(--accent-glow);padding:1rem;border-radius:var(--border-radius);cursor:pointer;
+  transition:all .3s;text-align:center;text-decoration:none;display:inline-block;width:100%;font-size:.85rem}
+.btn-primary:hover{box-shadow:0 0 25px var(--primary-color);transform:scale(1.02);filter:brightness(1.1)}
+.btn{background:#222;color:var(--primary-color);border:1px solid var(--primary-color);
+  padding:.6rem 1.2rem;border-radius:var(--border-radius);cursor:pointer;transition:all .2s;font-size:.85rem}
+.btn:hover{background:rgba(0,243,255,.1)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{padding:.4rem .9rem;font-size:.78rem;background:#1a1a1a;color:var(--primary-color);
+  border:1px solid var(--primary-color);border-radius:4px;cursor:pointer;
+  text-transform:uppercase;font-family:'Orbitron',sans-serif;transition:all .2s}
+.btn-sm:hover{background:var(--primary-color);color:#000}
+.btn-danger{background:#3a0000;color:var(--incorrect-color);border:1px solid var(--incorrect-color);
+  padding:.6rem 1.2rem;border-radius:var(--border-radius);cursor:pointer;transition:all .2s;font-size:.85rem}
+.btn-danger:hover{background:var(--incorrect-color);color:#000}
+.btn-icon{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--primary-color)}
+
+/* ── INPUTS ── */
+input[type="text"],input[type="number"],input[type="time"],textarea,select{
+  background:#000;border:1px solid #333;color:var(--text-color);padding:8px 10px;
+  border-radius:4px;font-family:'Poppins',sans-serif;font-size:.88rem;transition:border .2s}
+input[type="text"]:focus,input[type="number"]:focus,textarea:focus,select:focus{
+  outline:none;border-color:var(--primary-color)}
+textarea{resize:vertical;min-height:60px}
+select{cursor:pointer}
+input[type="color"]{width:40px;height:32px;border:1px solid #333;border-radius:4px;cursor:pointer;
+  background:#000;padding:2px}
+input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--primary-color)}
+
+/* ── HOME / DASHBOARD ── */
+.language-selector{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:1rem}
+.language-selector select{background:#111;color:var(--primary-color);border:1px solid var(--primary-color);padding:5px;border-radius:4px}
+.pomodoro-timer{text-align:center;max-width:420px;margin:0 auto 2rem}
+.timer-display{font-size:3.5rem;font-family:'Orbitron',sans-serif;color:var(--primary-color);
+  text-shadow:0 0 15px var(--primary-color);margin:1rem 0}
+.pomodoro-controls{display:flex;justify-content:center;gap:1rem}
+.pomodoro-session-label{font-size:.75rem;font-family:'Orbitron',sans-serif;opacity:.6;margin-bottom:.3rem}
+
+/* ── DASHBOARD GRID ── */
+.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:20px}
+.section-card{background:#111;border:1px solid #222;padding:20px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.5)}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;
+  border-bottom:1px solid var(--primary-color);padding-bottom:5px}
+.section-header h3{font-family:'Orbitron',sans-serif;color:var(--primary-color);text-transform:uppercase;font-size:1rem}
+
+/* ── NOTES ── */
+.input-group{display:flex;flex-direction:column;gap:8px}
+.input-group input,.input-group textarea,.input-group select{width:100%}
+.folders-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px}
+.folder-item{background:#222;padding:6px 10px;border-radius:4px;display:flex;align-items:center;gap:8px;font-size:.85rem}
+.delete-folder-btn,.delete-note-btn,.delete-link-btn{background:none;border:none;color:var(--incorrect-color);cursor:pointer;font-size:1.1rem;line-height:1}
+.notes-list{display:grid;gap:12px}
+.note-item{background:#1a1a1a;padding:12px;border-radius:8px;position:relative}
+.note-header{display:flex;justify-content:space-between;margin-bottom:8px}
+.note-footer{margin-top:8px;border-top:1px solid #333;padding-top:8px}
+.move-note-select{background:#111;color:var(--text-color);border:1px solid #333;padding:4px;border-radius:4px;font-size:.8rem;width:100%}
+
+/* ── CUSTOM LINKS ── */
+.link-controls{display:flex;flex-direction:column;gap:8px;margin-bottom:15px}
+.link-controls input,.link-controls select{width:100%}
+.buttons-list{display:flex;flex-wrap:wrap;gap:8px}
+.custom-link-wrapper{display:flex;align-items:center;gap:4px;background:#222;padding:4px;border-radius:20px}
+.custom-link-btn{padding:4px 12px;border-radius:15px;color:#000;font-weight:700;text-decoration:none;font-size:.8rem}
+
+/* ── RSS ── */
+.rss-item{padding:8px 0;border-bottom:1px solid #222}
+.rss-item a{color:var(--primary-color);text-decoration:none;font-weight:500;display:block;margin-bottom:2px}
+.rss-date{font-size:.7rem;color:#666}
+
+/* ── QUIZ ── */
+.quiz-header{margin-bottom:1rem}
+.question-container{margin-bottom:1rem}
+.options-container{display:flex;flex-direction:column;gap:.8rem}
+.option-btn{width:100%;padding:.9rem 1rem;background:#1a1a1a;border:1px solid #333;color:var(--text-color);
+  border-radius:4px;cursor:pointer;text-align:left;display:flex;align-items:center;transition:all .2s;font-size:.9rem}
+.option-btn:hover:not([disabled]){border-color:var(--primary-color);background:#222}
+.option-btn.correct{border-color:var(--correct-color);color:var(--correct-color);background:rgba(0,255,65,.1)}
+.option-btn.incorrect{border-color:var(--incorrect-color);color:var(--incorrect-color);background:rgba(255,0,60,.1)}
+.option-prefix{font-family:'Orbitron',sans-serif;font-weight:700;margin-right:12px;color:var(--primary-color);min-width:20px}
+.quiz-footer{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap}
+.quiz-footer .btn{flex:1;min-width:100px}
+#explanation-container{border-left:4px solid var(--primary-color);background:rgba(0,243,255,.05);padding:1rem;margin-top:1rem}
+
+/* ── RESULTS ── */
+.score-container{text-align:center;padding:2rem}
+.final-message{font-size:1.1rem;margin-top:.5rem;color:var(--primary-color)}
+.review-question{padding:1rem;margin-bottom:.8rem;border-radius:4px}
+.correct-review{border-left:4px solid var(--correct-color)}
+.incorrect-review{border-left:4px solid var(--incorrect-color)}
+.explanation{font-size:.85rem;opacity:.7;margin-top:.4rem;font-style:italic}
+
+/* ── CALENDAR ── */
+.calendar-screen{max-width:800px;margin:0 auto}
+.calendar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.calendar-header h3{font-family:'Orbitron',sans-serif;color:var(--primary-color);font-size:1.1rem}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1rem}
+.day-name{text-align:center;font-size:.75rem;font-weight:700;padding:.4rem 0;opacity:.6;font-family:'Orbitron',sans-serif}
+.day{position:relative;text-align:center;padding:.5rem .2rem;border:1px solid #222;border-radius:4px;
+  cursor:pointer;font-size:.85rem;transition:all .2s;min-height:36px}
+.day:hover{border-color:var(--primary-color);background:rgba(0,243,255,.05)}
+.day.study-day{background:rgba(0,243,255,.15);border-color:var(--primary-color);color:var(--primary-color);font-weight:700}
+.day.today{box-shadow:0 0 0 2px var(--primary-color)}
+.day.has-events::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;background:var(--primary-color);border-radius:50%}
+.calendar-events-list{margin-top:1rem;padding:1rem;background:var(--secondary-bg);border-radius:var(--border-radius);border:1px solid var(--border-color)}
+.event-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color)}
+.event-item:last-child{border-bottom:none}
+.event-info h4{margin:0;color:var(--primary-color)}
+.event-info span{font-size:.78rem;opacity:.7}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);
+  display:flex;align-items:center;justify-content:center;z-index:2000}
+.modal-content{background:var(--secondary-bg);padding:1.5rem;border-radius:var(--border-radius);
+  width:90%;max-width:400px;border:1px solid var(--primary-color);box-shadow:var(--accent-glow)}
+.modal-content h3{margin-bottom:1rem;color:var(--primary-color)}
+.modal-content input,.modal-content textarea{width:100%;margin-bottom:.7rem}
+.modal-content .flex{display:flex;gap:.5rem}
+
+/* ── DOCS ── */
+.docs-screen{max-width:900px;margin:0 auto}
+.annotation-toolbar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem;
+  background:#111;padding:.6rem;border-radius:4px}
+.tool-btn{background:#222;border:1px solid #444;color:var(--text-color);padding:.3rem .6rem;border-radius:4px;cursor:pointer;transition:all .2s}
+.tool-btn.active,.tool-btn:hover{border-color:var(--primary-color);color:var(--primary-color)}
+.color-swatch{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .2s}
+.color-swatch.active,.color-swatch:hover{border-color:#fff;transform:scale(1.2)}
+.size-btn{background:#222;border:1px solid #444;color:var(--text-color);padding:.2rem .5rem;border-radius:4px;cursor:pointer;font-size:.75rem}
+.size-btn.active{border-color:var(--primary-color);color:var(--primary-color)}
+#page-content-wrapper{position:relative;margin-bottom:1rem}
+.doc-page{padding:1.5rem}
+.doc-page h2{color:var(--primary-color);margin-bottom:.8rem;font-family:'Orbitron',sans-serif;font-size:1rem}
+#annotation-canvas{position:absolute;top:0;left:0;width:100%;height:100%;cursor:crosshair;border-radius:var(--border-radius)}
+.page-navigation{display:flex;align-items:center;justify-content:center;gap:1rem;margin:1rem 0}
+.page-info{font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--primary-color)}
+.external-doc-link{text-align:center;margin-top:.5rem}
+.external-doc-link a{display:inline-block;width:auto;padding:.7rem 2rem}
+.add-content-url{display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end;margin-bottom:.8rem;padding:1rem}
+.add-content-url input,.add-content-url select{flex:1;min-width:150px}
+
+/* ── MULTIMEDIA ── */
+.multimedia-screen h1{margin-bottom:1.5rem;font-family:'Orbitron',sans-serif;color:var(--primary-color)}
+.multimedia-list{display:grid;gap:1.5rem}
+.media-item{border:1px solid #222;border-radius:8px;padding:1.2rem;background:#111}
+.media-item h3{color:var(--primary-color);margin-bottom:.4rem;font-family:'Orbitron',sans-serif;font-size:1rem}
+.media-description{font-size:.85rem;opacity:.7;margin-bottom:1rem}
+.media-content iframe,.media-content video,.media-content audio{border-radius:4px;border:1px solid #333}
+.audio-player-container{background:#0a0a0a;padding:1rem;border-radius:8px}
+.audio-visualizer{display:flex;align-items:center;justify-content:center;gap:4px;height:40px;margin-bottom:.8rem}
+.wave-bar{width:4px;background:var(--primary-color);border-radius:2px;animation:wave 1.2s ease-in-out infinite;box-shadow:0 0 6px var(--primary-color)}
+.wave-bar:nth-child(1){animation-delay:0s;height:15px}
+.wave-bar:nth-child(2){animation-delay:.2s;height:28px}
+.wave-bar:nth-child(3){animation-delay:.4s;height:38px}
+.wave-bar:nth-child(4){animation-delay:.2s;height:25px}
+.wave-bar:nth-child(5){animation-delay:0s;height:12px}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.6)}}
+.audio-player-container audio{width:100%;margin-top:.5rem}
+.media-cover{width:100%;max-height:250px;object-fit:cover;border-radius:6px;margin-bottom:.8rem}
+
+/* ── EXAMEN VIAL ── */
+.examen-screen{max-width:800px;margin:0 auto}
+.exam-header{margin-bottom:1.5rem}
+.progress-bar-container{height:8px;background:#222;border-radius:4px;overflow:hidden;margin-bottom:.6rem}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));transition:width .3s ease}
+.exam-stats{display:flex;justify-content:space-between;font-family:'Orbitron',sans-serif;font-size:.78rem;color:var(--primary-color)}
+.question-card h2{font-size:1.3rem;margin-bottom:1rem;color:var(--text-color)}
+.explanation-box{margin-top:1rem;border-left:4px solid var(--primary-color);background:rgba(0,243,255,.05);padding:1rem}
+.hint-text{color:var(--hint-color);font-size:.88rem;margin-top:.6rem;font-style:italic}
+.exam-actions{margin-top:1rem}
+.score-circle{width:140px;height:140px;border-radius:50%;border:5px solid var(--primary-color);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;margin:1.5rem auto;box-shadow:0 0 20px var(--primary-color)}
+.score-num{font-size:1.8rem;font-weight:700}
+.score-percent{font-size:.9rem;opacity:.7}
+
+/* ── SETTINGS ── */
+.settings-screen{max-width:800px;margin:0 auto}
+.settings-screen h1{font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:1.5rem}
+.settings-group{margin-bottom:1.5rem}
+.settings-group h3{font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:.8rem;
+  border-bottom:1px solid #333;padding-bottom:.4rem;font-size:.9rem}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
+.flags-container{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+.flag-btn{background:none;border:1px solid transparent;font-size:1.4rem;cursor:pointer;padding:4px;border-radius:4px;transition:all .2s}
+.flag-btn:hover,.flag-btn.active{border-color:var(--primary-color);background:rgba(0,243,255,.1)}
+.theme-options{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+.theme-select-btn.active{border:2px solid var(--primary-color);box-shadow:var(--accent-glow)}
+.logs-container{background:#000;color:#00ff41;font-family:'JetBrains Mono',monospace;font-size:.75rem;
+  padding:10px;border-radius:4px;height:180px;overflow-y:auto;margin-top:.5rem;border:1px solid #333}
+.log-entry{margin-bottom:3px}
+.log-entry.error{color:var(--incorrect-color)}
+.log-entry.success{color:var(--correct-color)}
+.rss-feeds-list{margin-top:.8rem}
+.rss-feed-item{display:flex;justify-content:space-between;align-items:center;
+  background:#1a1a1a;padding:6px 10px;border-radius:4px;margin-bottom:4px;font-size:.8rem}
+.history-list{max-height:120px;overflow-y:auto}
+.history-item{display:flex;justify-content:space-between;font-size:.8rem;padding:4px 0;border-bottom:1px solid #222}
+.opacity-70{opacity:.7}
+.opacity-50{opacity:.5}
+.mt-20{margin-top:20px}
+.mb-10{margin-bottom:10px}
+.mb-20{margin-bottom:20px}
+.flex{display:flex}
+.gap-10{gap:10px}
+.w-full{width:100%}
+
+/* ── ADD MEDIA MODAL ── */
+#add-media-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.88);
+  display:none;align-items:center;justify-content:center;z-index:3000}
+#add-media-modal.open{display:flex}
+.add-media-box{background:#111;border:1px solid var(--primary-color);border-radius:12px;
+  padding:2rem;width:90%;max-width:520px;box-shadow:0 0 40px rgba(0,243,255,.2)}
+.add-media-box h2{font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:1.5rem;font-size:1.1rem}
+.add-media-types{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-bottom:1.5rem}
+.type-card{background:#1a1a1a;border:2px solid #333;border-radius:8px;padding:1rem;text-align:center;
+  cursor:pointer;transition:all .2s}
+.type-card:hover,.type-card.selected{border-color:var(--primary-color);background:rgba(0,243,255,.08);box-shadow:var(--accent-glow)}
+.type-card .type-icon{font-size:1.8rem;display:block;margin-bottom:.3rem}
+.type-card .type-label{font-size:.75rem;font-family:'Orbitron',sans-serif;color:var(--primary-color)}
+.add-media-form{display:flex;flex-direction:column;gap:.8rem}
+.add-media-form input,.add-media-form textarea,.add-media-form select{width:100%;background:#0a0a0a;
+  border:1px solid #333;color:var(--text-color);padding:.7rem;border-radius:6px}
+.add-media-form textarea{min-height:60px;resize:vertical}
+.add-media-actions{display:flex;gap:.7rem;margin-top:.5rem}
+.add-media-actions .btn-primary{flex:2;padding:.7rem}
+.add-media-actions .btn{flex:1;padding:.7rem}
+.add-btn-fab{position:fixed;bottom:2rem;right:2rem;background:linear-gradient(135deg,var(--primary-color),#0088ff);
+  color:#000;border:none;width:56px;height:56px;border-radius:50%;font-size:1.5rem;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,243,255,.5);z-index:500;transition:all .3s;display:none;align-items:center;justify-content:center}
+.add-btn-fab:hover{transform:scale(1.1);box-shadow:0 0 30px rgba(0,243,255,.7)}
+
+/* ── NOTIFICATION TOAST ── */
+.notification-toast{position:fixed;top:80px;right:20px;background:var(--secondary-bg);
+  border:2px solid var(--primary-color);padding:1rem 1.2rem;border-radius:var(--border-radius);
+  box-shadow:0 0 20px rgba(0,0,0,.5);z-index:3000;animation:slideInRight .3s ease-out;max-width:300px}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.notification-toast h4{margin:0 0 4px;color:var(--primary-color)}
+.notification-toast p{margin:0;font-size:.85rem}
+.notification-toast button{margin-top:.5rem;width:100%}
+
+.linkedin-link{color:#0a66c2;text-decoration:none;font-weight:600;font-size:.78rem;display:inline-flex;align-items:center}
+.linkedin-link:hover{text-decoration:underline}
+.policy-link{font-size:.72rem;color:var(--primary-color);text-decoration:none;opacity:.7;border:1px solid;border-radius:10px;padding:2px 8px}
+.policy-link:hover{opacity:1}
+
+/* ── LOGO WHEEL ANIMATION ── */
+@keyframes wheelSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes wheelGlow{0%,100%{filter:drop-shadow(0 0 4px var(--primary-color)) drop-shadow(0 0 8px #fff)}50%{filter:drop-shadow(0 0 12px var(--primary-color)) drop-shadow(0 0 20px #00f3ff)}}
+@keyframes asphaltShine{0%{opacity:0;transform:translateX(-100%)}40%{opacity:.7}100%{opacity:0;transform:translateX(200%)}}
+.logo-spinning svg{animation:wheelSpin .8s ease-in-out, wheelGlow .8s ease-in-out}
+.asphalt-streak{position:absolute;bottom:-4px;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#00f3ff,rgba(255,255,255,.9),#00f3ff,transparent);border-radius:2px;animation:asphaltShine .8s ease-out forwards;pointer-events:none}
+
+/* ── PRIVACY / MANUAL MODAL ── */
+.fullscreen-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);z-index:4000;overflow-y:auto;padding:2rem 1rem}
+.fullscreen-modal-inner{max-width:800px;margin:0 auto;background:#111;border:1px solid var(--primary-color);border-radius:12px;padding:2rem}
+.fullscreen-modal-inner h1{font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:1.5rem;font-size:1.3rem}
+.fullscreen-modal-inner h2{color:var(--primary-color);margin:1.5rem 0 .5rem;font-size:1rem;font-family:'Orbitron',sans-serif}
+.fullscreen-modal-inner p,.fullscreen-modal-inner li{font-size:.88rem;line-height:1.7;opacity:.85;margin-bottom:.5rem}
+.fullscreen-modal-inner ul{padding-left:1.5rem}
+.close-modal-btn{position:sticky;top:0;float:right;background:var(--primary-color);color:#000;border:none;padding:.5rem 1.2rem;border-radius:20px;cursor:pointer;font-family:'Orbitron',sans-serif;font-size:.8rem;z-index:1}
+
+/* ── AI TRANSLATOR ── */
+.ai-translator-box{background:#0a0a0a;border:1px solid var(--primary-color);border-radius:8px;padding:1rem;margin-top:1rem}
+.ai-translator-box h4{font-family:'Orbitron',sans-serif;color:var(--primary-color);font-size:.85rem;margin-bottom:.8rem}
+.translator-result{background:#000;border:1px solid #333;border-radius:6px;padding:.8rem;min-height:60px;font-size:.88rem;margin-top:.6rem;color:#0f0;font-family:'JetBrains Mono',monospace;white-space:pre-wrap}
+.api-key-section{background:#111;border:1px solid #333;border-radius:8px;padding:1rem;margin-bottom:1rem}
+.api-key-section h4{font-family:'Orbitron',sans-serif;color:var(--primary-color);font-size:.82rem;margin-bottom:.6rem}
+@media(max-width:600px){
+  .app-title{font-size:1rem}
+  .pomodoro-controls{flex-direction:column}
+  .dashboard-grid{grid-template-columns:1fr}
+  .add-media-types{grid-template-columns:repeat(2,1fr)}
+  .add-media-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div id="app-container">
+  <!-- ── NAVBAR ── -->
+  <nav id="navbar">
+    <div id="logo-btn" class="logo">
+      <div id="logo-wheel-wrap">
+        <svg id="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="36" height="36">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary-color)" stroke-width="8"/>
+          <path d="M50 15 V 50 H 85" fill="none" stroke="var(--primary-color)" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="10" fill="var(--primary-color)"/>
+          <!-- Wheel spokes -->
+          <line x1="50" y1="5" x2="50" y2="20" stroke="var(--primary-color)" stroke-width="4" opacity=".4"/>
+          <line x1="95" y1="50" x2="80" y2="50" stroke="var(--primary-color)" stroke-width="4" opacity=".4"/>
+          <line x1="5" y1="50" x2="20" y2="50" stroke="var(--primary-color)" stroke-width="4" opacity=".4"/>
+          <line x1="50" y1="95" x2="50" y2="80" stroke="var(--primary-color)" stroke-width="4" opacity=".4"/>
+        </svg>
+      </div>
+      <span class="app-title">RUCHK DUVI</span>
+    </div>
+    <div class="nav-controls">
+      <div id="pomodoro-nav"></div>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+        <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.106a.75.75 0 010 1.06l-1.591 1.59a.75.75 0 11-1.06-1.06l1.59-1.591a.75.75 0 011.06 0zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM17.803 17.803a.75.75 0 01-1.06 0l-1.59-1.591a.75.75 0 111.06-1.06l1.59 1.591a.75.75 0 010 1.06zM12 21a.75.75 0 01-.75-.75v-2.25a.75.75 0 011.5 0v2.25a.75.75 0 01-.75-.75zM5.197 17.803a.75.75 0 010-1.06l1.59-1.591a.75.75 0 011.06 1.06l-1.59 1.59a.75.75 0 01-1.06 0zM3 12a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H3.75A.75.75 0 013 12zM6.106 5.197a.75.75 0 011.06 0l1.591 1.59a.75.75 0 01-1.06 1.06L6.106 6.258a.75.75 0 010-1.06z"/></svg>
+        <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-3.833 2.067-7.17 5.162-8.972a.75.75 0 01.819.162z" clip-rule="evenodd"/></svg>
+      </button>
+      <button id="menu-toggle" class="menu-toggle" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── SIDE MENU ── -->
+  <div id="side-menu" class="side-menu">
+    <ul>
+      <li><a href="#" data-screen="home">Dashboard</a></li>
+      <li><a href="#" data-screen="calendar">Calendar</a></li>
+      <li><a href="#" data-screen="docs">Docs</a></li>
+      <li><a href="#" data-screen="multimedia">Multimedia</a></li>
+      <li><a href="#" data-screen="examen">Examen Vial</a></li>
+      <li><a href="#" data-screen="settings">Settings</a></li>
+      <li><a href="#" onclick="showPrivacyPolicy();return false" style="opacity:.7">🔒 Privacidad</a></li>
+      <li><a href="#" onclick="showManual();return false" style="opacity:.7">📖 Manual</a></li>
+    </ul>
+    <div class="menu-credits">
+      <p>© 2026 RUCHK DUVI App<br>Todos los derechos reservados.</p>
+      <p style="margin-top:.4rem">Creado por<br>
+        <a href="https://www.linkedin.com/in/jaime-andr%C3%A9s-due%C3%B1as-vicu%C3%B1a" target="_blank" rel="noopener" class="linkedin-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="#0a66c2" style="vertical-align:middle;margin-right:4px"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          Jaime Andrés Dueñas Vicuña
+        </a>
+      </p>
+      <a href="https://paypal.me/jaimeDuenas" target="_blank" class="coffee-btn" style="margin-top:.6rem">☕ Buy me a coffee · PayPal</a>
+      <div style="margin-top:.8rem;display:flex;gap:.5rem;flex-wrap:wrap">
+        <a href="#" onclick="showPrivacyPolicy();return false" class="policy-link">🔒 Privacidad</a>
+        <a href="#" onclick="showManual();return false" class="policy-link">📖 Manual</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main id="app"></main>
+</div>
+
+<!-- ── ADD MEDIA MODAL ── -->
+<div id="add-media-modal">
+  <div class="add-media-box">
+    <h2>➕ Añadir Nuevo Archivo</h2>
+    <div class="add-media-types">
+      <div class="type-card selected" data-type="pdf">
+        <span class="type-icon">📄</span>
+        <span class="type-label">PDF / Doc</span>
+      </div>
+      <div class="type-card" data-type="podcast">
+        <span class="type-icon">🎙️</span>
+        <span class="type-label">Podcast</span>
+      </div>
+      <div class="type-card" data-type="video">
+        <span class="type-icon">🎬</span>
+        <span class="type-label">Vídeo</span>
+      </div>
+      <div class="type-card" data-type="audio">
+        <span class="type-icon">🎵</span>
+        <span class="type-label">Audio</span>
+      </div>
+      <div class="type-card" data-type="embed">
+        <span class="type-icon">🌐</span>
+        <span class="type-label">Embed URL</span>
+      </div>
+      <div class="type-card" data-type="image">
+        <span class="type-icon">🖼️</span>
+        <span class="type-label">Imagen</span>
+      </div>
+    </div>
+    <div class="add-media-form">
+      <input type="text" id="am-title" placeholder="Título del archivo *">
+      <input type="text" id="am-url" placeholder="URL del archivo (Google Drive, MP3, MP4...) *">
+      <textarea id="am-desc" placeholder="Descripción (opcional)"></textarea>
+      <input type="text" id="am-cover" placeholder="URL de portada / miniatura (opcional)">
+    </div>
+    <div class="add-media-actions">
+      <button id="am-save-btn" class="btn-primary">💾 Guardar</button>
+      <button id="am-cancel-btn" class="btn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FAB ADD BUTTON ── -->
+<button id="add-fab" class="add-btn-fab" title="Añadir archivo multimedia" aria-label="Añadir multimedia">➕</button>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════════════
+   DATA — All original content preserved intact
+   ════════════════════════════════════════════════════ */
+const appData = {
+  ui: {
+    es: {
+      title:"Examen Teórico de Conducir HK",
+      description:(c)=>`Pon a prueba tus conocimientos. Este examen contiene ${c} preguntas.`,
+      startBtn:"Empezar Examen",resumeBtn:"Continuar Examen",
+      questionTitle:(c,t)=>`Pregunta ${c}/${t}`,nextBtn:"Siguiente",
+      resultsTitle:"Resultados",scoreText:"Respuestas correctas",
+      messageGreat:"¡Excelente! Estás listo para la carretera.",
+      messageGood:"¡Buen trabajo! Sigue practicando.",
+      messagePoor:"Necesitas estudiar más. ¡No te rindas!",
+      restartBtn:"Volver a Intentar",selectLanguage:"Idioma",hintBtn:"Ver Pista",revealBtn:"Revelar Respuesta",
+      pomodoroTitle:"Pomodoro",pomodoroStart:"Iniciar",pomodoroPause:"Pausar",pomodoroReset:"Reiniciar",
+      calendarTitle:"Calendario de Estudio",docsTitle:"Manual del Conductor",
+      menuDashboard:"Panel Principal",menuCalendar:"Calendario",menuDocs:"Documentos",
+      menuMultimedia:"Multimedia",menuSettings:"Configuración",
+      prevPage:"Anterior",nextPage:"Siguiente",page:"Página",
+      toolBrush:"Pincel",toolEraser:"Goma",toolClear:"Limpiar",viewPdfBtn:"Ver PDF Completo",
+      pomodoroWork:"Trabajo (min)",pomodoroBreak:"Descanso (min)",pomodoroHistory:"Historial",
+      calendarAddEvent:"Agregar Evento",calendarEventTitle:"Título",calendarEventTime:"Hora",
+      calendarEventSave:"Guardar",settingsTheme:"Tema",settingsLanguage:"Idioma",
+      settingsLogs:"Registros",notesTitle:"Notas",rssTitle:"Noticias HK",
+      themeLight:"Claro",themeDark:"Oscuro",themeCyberpunk:"Cyberpunk",themeMatrix:"Matrix",themeRetro:"Retro",
+      loading:"Cargando...",newFolderPlaceholder:"Nueva Carpeta",createFolderBtn:"Crear",
+      newNotePlaceholder:"Título",newNoteContentPlaceholder:"Contenido",noFolder:"Sin Carpeta",
+      createNoteBtn:"Crear Nota",linksTitle:"Enlaces",linkLabelPlaceholder:"Etiqueta",
+      linkUrlPlaceholder:"URL (https://...)",addLinkBtn:"Agregar",unorganizedNotes:"Sin organizar",
+      moveToFolder:"Mover a...",noHistory:"Sin historial",cancelBtn:"Cancelar",eventDescription:"Descripción"
+    },
+    en: {
+      title:"HK Driving Theory Test",
+      description:(c)=>`Test your knowledge of the HK Road Users' Code. ${c} questions.`,
+      startBtn:"Start Quiz",resumeBtn:"Resume Quiz",questionTitle:(c,t)=>`Question ${c}/${t}`,
+      nextBtn:"Next",resultsTitle:"Results",scoreText:"Correct answers",
+      messageGreat:"Excellent! You are ready for the road.",
+      messageGood:"Good job! Keep practising.",messagePoor:"You need to study more. Don't give up!",
+      restartBtn:"Try Again",selectLanguage:"Language",hintBtn:"Show Hint",revealBtn:"Reveal Answer",
+      pomodoroTitle:"Pomodoro",pomodoroStart:"Start",pomodoroPause:"Pause",pomodoroReset:"Reset",
+      calendarTitle:"Study Calendar",docsTitle:"Driver's Manual",menuDashboard:"Dashboard",
+      menuCalendar:"Calendar",menuDocs:"Docs",menuMultimedia:"Multimedia",menuSettings:"Settings",
+      prevPage:"Previous",nextPage:"Next",page:"Page",toolBrush:"Brush",toolEraser:"Eraser",toolClear:"Clear",
+      viewPdfBtn:"View Full PDF",pomodoroWork:"Work (min)",pomodoroBreak:"Break (min)",pomodoroHistory:"History",
+      calendarAddEvent:"Add Event",calendarEventTitle:"Title",calendarEventTime:"Time",
+      calendarEventSave:"Save",settingsTheme:"Theme",settingsLanguage:"Language",settingsLogs:"Logs",
+      notesTitle:"Notes",rssTitle:"HK News",themeLight:"Light",themeDark:"Dark",
+      themeCyberpunk:"Cyberpunk",themeMatrix:"Matrix",themeRetro:"Retro",loading:"Loading...",
+      newFolderPlaceholder:"New Folder",createFolderBtn:"Create",newNotePlaceholder:"Title",
+      newNoteContentPlaceholder:"Content",noFolder:"No Folder",createNoteBtn:"Create Note",
+      linksTitle:"Links",linkLabelPlaceholder:"Label",linkUrlPlaceholder:"URL (https://...)",
+      addLinkBtn:"Add",unorganizedNotes:"Unorganized",moveToFolder:"Move to...",noHistory:"No history",
+      cancelBtn:"Cancel",eventDescription:"Description"
+    },
+    zh: {
+      title:"香港駕駛理論考試",description:(c)=>`測試您的知識。此測驗包含 ${c} 條問題。`,
+      startBtn:"開始測驗",resumeBtn:"繼續測驗",questionTitle:(c,t)=>`問題 ${c}/${t}`,
+      nextBtn:"下一題",resultsTitle:"測驗結果",scoreText:"正確答案",
+      messageGreat:"表現出色！您已準備好上路了。",messageGood:"做得不錯！",messagePoor:"您需要多加溫習。",
+      restartBtn:"再試一次",selectLanguage:"語言",hintBtn:"查看提示",revealBtn:"顯示答案",
+      pomodoroTitle:"番茄鐘",pomodoroStart:"開始",pomodoroPause:"暫停",pomodoroReset:"重設",
+      calendarTitle:"學習日曆",docsTitle:"駕駛手冊",menuDashboard:"主頁",menuCalendar:"日曆",
+      menuDocs:"文件",menuMultimedia:"多媒體",menuSettings:"設置",prevPage:"上一頁",nextPage:"下一頁",
+      page:"頁",toolBrush:"畫筆",toolEraser:"橡皮擦",toolClear:"清除",viewPdfBtn:"查看完整PDF",
+      pomodoroWork:"工作 (分)",pomodoroBreak:"休息 (分)",pomodoroHistory:"歷史",
+      calendarAddEvent:"添加事件",calendarEventTitle:"標題",calendarEventTime:"時間",
+      calendarEventSave:"保存",settingsTheme:"主題",settingsLanguage:"語言",settingsLogs:"日誌",
+      notesTitle:"筆記",rssTitle:"香港新聞",themeLight:"淺色",themeDark:"深色",
+      themeCyberpunk:"賽博朋克",themeMatrix:"黑客帝國",themeRetro:"復古",loading:"載入中...",
+      newFolderPlaceholder:"新文件夾",createFolderBtn:"創建",newNotePlaceholder:"標題",
+      newNoteContentPlaceholder:"內容",noFolder:"無文件夾",createNoteBtn:"創建筆記",
+      linksTitle:"鏈接",linkLabelPlaceholder:"標籤",linkUrlPlaceholder:"URL (https://...)",
+      addLinkBtn:"添加",unorganizedNotes:"未整理",moveToFolder:"移動到...",noHistory:"暫無歷史",
+      cancelBtn:"取消",eventDescription:"描述"
+    },
+    tl:{title:"HK Driving Theory Test",description:(c)=>`${c} na mga katanungan.`,
+      startBtn:"Simulan",resumeBtn:"Ipagpatuloy",questionTitle:(c,t)=>`Tanong ${c}/${t}`,
+      nextBtn:"Susunod",resultsTitle:"Mga Resulta",scoreText:"Mga tamang sagot",
+      messageGreat:"Napakahusay!",messageGood:"Magaling!",messagePoor:"Kailangan mo pang mag-aral.",
+      restartBtn:"Subukan Muli",selectLanguage:"Wika",hintBtn:"Hint",revealBtn:"Sagot",
+      pomodoroTitle:"Pomodoro",pomodoroStart:"Simulan",pomodoroPause:"I-pause",pomodoroReset:"I-reset",
+      calendarTitle:"Kalendaryo",docsTitle:"Manual",menuDashboard:"Dashboard",menuCalendar:"Kalendaryo",
+      menuDocs:"Docs",menuMultimedia:"Multimedia",menuSettings:"Settings",prevPage:"Nakaraan",
+      nextPage:"Susunod",page:"Pahina",toolBrush:"Brush",toolEraser:"Eraser",toolClear:"Linisin",
+      viewPdfBtn:"PDF",pomodoroWork:"Trabaho (min)",pomodoroBreak:"Pahinga (min)",pomodoroHistory:"History",
+      calendarAddEvent:"Magdagdag",calendarEventTitle:"Pamagat",calendarEventTime:"Oras",
+      calendarEventSave:"I-save",settingsTheme:"Tema",settingsLanguage:"Wika",settingsLogs:"Logs",
+      notesTitle:"Mga Tala",rssTitle:"Balita",themeLight:"Maliwanag",themeDark:"Madilim",
+      themeCyberpunk:"Cyberpunk",themeMatrix:"Matrix",themeRetro:"Retro",loading:"Naglo-load...",
+      newFolderPlaceholder:"Bagong Folder",createFolderBtn:"Gumawa",newNotePlaceholder:"Pamagat",
+      newNoteContentPlaceholder:"Nilalaman",noFolder:"Walang Folder",createNoteBtn:"Tala",
+      linksTitle:"Mga Link",linkLabelPlaceholder:"Label",linkUrlPlaceholder:"URL",
+      addLinkBtn:"Idagdag",unorganizedNotes:"Walang ayos",moveToFolder:"Ilipat sa...",noHistory:"Walang history",
+      cancelBtn:"Kanselahin",eventDescription:"Paglalarawan"},
+    hi:{title:"HK ड्राइविंग थ्योरी टेस्ट",description:(c)=>`${c} प्रश्न।`,
+      startBtn:"शुरू",resumeBtn:"जारी",questionTitle:(c,t)=>`${c}/${t}`,
+      nextBtn:"अगला",resultsTitle:"परिणाम",scoreText:"सही उत्तर",
+      messageGreat:"उत्कृष्ट!",messageGood:"अच्छा!",messagePoor:"और अध्ययन करें।",
+      restartBtn:"पुनः",selectLanguage:"भाषा",hintBtn:"संकेत",revealBtn:"उत्तर",
+      pomodoroTitle:"पोमोडोरो",pomodoroStart:"शुरू",pomodoroPause:"रोकें",pomodoroReset:"रीसेट",
+      calendarTitle:"कैलेंडर",docsTitle:"मैनुअल",menuDashboard:"डैशबोर्ड",menuCalendar:"कैलेंडर",
+      menuDocs:"दस्तावेज़",menuMultimedia:"मल्टीमीडिया",menuSettings:"सेटिंग्स",prevPage:"पिछला",
+      nextPage:"अगला",page:"पृष्ठ",toolBrush:"ब्रश",toolEraser:"इरेज़र",toolClear:"साफ",
+      viewPdfBtn:"PDF",pomodoroWork:"काम (मिनट)",pomodoroBreak:"ब्रेक (मिनट)",pomodoroHistory:"इतिहास",
+      calendarAddEvent:"ईवेंट",calendarEventTitle:"शीर्षक",calendarEventTime:"समय",
+      calendarEventSave:"सहेजें",settingsTheme:"थीम",settingsLanguage:"भाषा",settingsLogs:"लॉग",
+      notesTitle:"नोट्स",rssTitle:"समाचार",themeLight:"हल्का",themeDark:"गहरा",
+      themeCyberpunk:"साइबरपंक",themeMatrix:"मैट्रिक्स",themeRetro:"रेट्रो",loading:"लोड...",
+      newFolderPlaceholder:"नया फ़ोल्डर",createFolderBtn:"बनाएँ",newNotePlaceholder:"शीर्षक",
+      newNoteContentPlaceholder:"सामग्री",noFolder:"कोई फ़ोल्डर नहीं",createNoteBtn:"नोट",
+      linksTitle:"लिंक",linkLabelPlaceholder:"लेबल",linkUrlPlaceholder:"URL",
+      addLinkBtn:"जोड़ें",unorganizedNotes:"अव्यवस्थित",moveToFolder:"ले जाएं...",noHistory:"कोई इतिहास नहीं",
+      cancelBtn:"रद्द करें",eventDescription:"विवरण"},
+    ru:{title:"Тест по теории вождения в Гонконге",description:(c)=>`${c} вопросов.`,
+      startBtn:"Начать",resumeBtn:"Продолжить",questionTitle:(c,t)=>`${c}/${t}`,
+      nextBtn:"Далее",resultsTitle:"Результаты",scoreText:"Правильные ответы",
+      messageGreat:"Отлично!",messageGood:"Хорошо!",messagePoor:"Нужно больше учиться.",
+      restartBtn:"Ещё раз",selectLanguage:"Язык",hintBtn:"Подсказка",revealBtn:"Ответ",
+      pomodoroTitle:"Помодоро",pomodoroStart:"Старт",pomodoroPause:"Пауза",pomodoroReset:"Сброс",
+      calendarTitle:"Календарь",docsTitle:"Руководство",menuDashboard:"Панель",menuCalendar:"Календарь",
+      menuDocs:"Документы",menuMultimedia:"Мультимедиа",menuSettings:"Настройки",prevPage:"Назад",
+      nextPage:"Вперед",page:"Стр.",toolBrush:"Кисть",toolEraser:"Ластик",toolClear:"Очистить",
+      viewPdfBtn:"PDF",pomodoroWork:"Работа (мин)",pomodoroBreak:"Отдых (мин)",pomodoroHistory:"История",
+      calendarAddEvent:"Добавить",calendarEventTitle:"Название",calendarEventTime:"Время",
+      calendarEventSave:"Сохранить",settingsTheme:"Тема",settingsLanguage:"Язык",settingsLogs:"Логи",
+      notesTitle:"Заметки",rssTitle:"Новости",themeLight:"Светлая",themeDark:"Темная",
+      themeCyberpunk:"Киберпанк",themeMatrix:"Матрица",themeRetro:"Ретро",loading:"Загрузка...",
+      newFolderPlaceholder:"Новая папка",createFolderBtn:"Создать",newNotePlaceholder:"Заголовок",
+      newNoteContentPlaceholder:"Содержание",noFolder:"Без папки",createNoteBtn:"Заметка",
+      linksTitle:"Ссылки",linkLabelPlaceholder:"Метка",linkUrlPlaceholder:"URL",
+      addLinkBtn:"Добавить",unorganizedNotes:"Неорганизованные",moveToFolder:"Переместить...",noHistory:"Нет истории",
+      cancelBtn:"Отмена",eventDescription:"Описание"},
+    ms:{title:"Ujian Teori Memandu HK",description:(c)=>`${c} soalan.`,
+      startBtn:"Mula",resumeBtn:"Sambung",questionTitle:(c,t)=>`${c}/${t}`,
+      nextBtn:"Seterusnya",resultsTitle:"Keputusan",scoreText:"Jawapan betul",
+      messageGreat:"Cemerlang!",messageGood:"Syabas!",messagePoor:"Perlu belajar lebih.",
+      restartBtn:"Cuba Lagi",selectLanguage:"Bahasa",hintBtn:"Petunjuk",revealBtn:"Jawapan",
+      pomodoroTitle:"Pomodoro",pomodoroStart:"Mula",pomodoroPause:"Jeda",pomodoroReset:"Set Semula",
+      calendarTitle:"Kalendar",docsTitle:"Manual",menuDashboard:"Papan Pemuka",menuCalendar:"Kalendar",
+      menuDocs:"Dokumen",menuMultimedia:"Multimedia",menuSettings:"Tetapan",prevPage:"Sebelum",
+      nextPage:"Seterusnya",page:"Halaman",toolBrush:"Berus",toolEraser:"Pemadam",toolClear:"Padam",
+      viewPdfBtn:"PDF",pomodoroWork:"Kerja (min)",pomodoroBreak:"Rehat (min)",pomodoroHistory:"Sejarah",
+      calendarAddEvent:"Tambah",calendarEventTitle:"Tajuk",calendarEventTime:"Masa",
+      calendarEventSave:"Simpan",settingsTheme:"Tema",settingsLanguage:"Bahasa",settingsLogs:"Log",
+      notesTitle:"Nota",rssTitle:"Berita",themeLight:"Cerah",themeDark:"Gelap",
+      themeCyberpunk:"Cyberpunk",themeMatrix:"Matrix",themeRetro:"Retro",loading:"Memuatkan...",
+      newFolderPlaceholder:"Folder Baru",createFolderBtn:"Cipta",newNotePlaceholder:"Tajuk",
+      newNoteContentPlaceholder:"Kandungan",noFolder:"Tiada Folder",createNoteBtn:"Nota",
+      linksTitle:"Pautan",linkLabelPlaceholder:"Label",linkUrlPlaceholder:"URL",
+      addLinkBtn:"Tambah",unorganizedNotes:"Tidak Teratur",moveToFolder:"Pindah ke...",noHistory:"Tiada sejarah",
+      cancelBtn:"Batal",eventDescription:"Penerangan"}
+  },
+
+  /* ── QUIZ DATA — All 50 questions per language, intact ── */
+  quiz: {
+    es: [
+      {pregunta:"¿Qué debe hacer si ve una señal de 'Stop' en un cruce?",opciones:["Reducir la velocidad y proceder si no hay tráfico.","Detenerse completamente detrás de la línea, incluso si no hay tráfico.","Ceder el paso solo al tráfico de la derecha.","Tocar la bocina para advertir a otros conductores."],respuestaCorrecta:1,explicacion:"Una señal de 'Stop' exige detenerse completamente detrás de la línea de detención, sin importar si hay tráfico visible o no, y ceder el paso antes de continuar.",pista:"Esta señal exige la detención total, no solo reducir la velocidad."},
+      {pregunta:"En una rotonda, ¿a qué tráfico debe ceder el paso antes de entrar?",opciones:["Al tráfico que se aproxima por la izquierda.","Al tráfico que ya está circulando dentro de la rotonda (viniendo de su derecha).","A los vehículos más grandes.","No es necesario ceder el paso, tiene prioridad."],respuestaCorrecta:1,explicacion:"Al acercarse a una rotonda, debe ceder el paso a cualquier vehículo que ya esté dentro de ella, que se aproximará por su derecha.",pista:"La prioridad la tienen los que ya están dentro del círculo."},
+      {pregunta:"¿Qué significa una luz verde intermitente ('Green Man' parpadeando) para los peatones?",opciones:["Puede empezar a cruzar la calle.","Debe terminar de cruzar si ya está en el paso de peatones, pero no debe empezar a cruzar.","El tráfico se detendrá por completo.","Indica un fallo en el semáforo."],respuestaCorrecta:1,explicacion:"Una luz de 'Hombre Verde' parpadeando significa que los peatones no deben empezar a cruzar, pero si ya han comenzado, tienen tiempo para llegar a la acera o a un refugio central.",pista:"Parpadear es una advertencia para no empezar a cruzar."},
+      {pregunta:"¿A qué distancia está prohibido cruzar la calle cerca de un paso de peatones con semáforo o puente peatonal?",opciones:["5 metros","10 metros","15 metros","No hay una distancia específica."],respuestaCorrecta:2,explicacion:"Está prohibido cruzar la calzada a menos de 15 metros de un puente peatonal, un subterráneo o un paso de 'Hombre Verde'.",pista:"Es una distancia de seguridad estandarizada."},
+      {pregunta:"Al conducir de noche, ¿cuándo debe bajar las luces altas?",opciones:["Solo en zonas urbanas.","Cuando hay farolas en la calle o cuando se acerca otro vehículo.","Únicamente cuando un vehículo viene de frente.","No es necesario bajarlas si no hay tráfico."],respuestaCorrecta:1,explicacion:"Debe bajar las luces altas cuando hay alumbrado público o para no deslumbrar a otros usuarios de la vía.",pista:"El objetivo es no deslumbrar a nadie."},
+      {pregunta:"¿Cuál es la norma principal al adelantar en una autovía?",opciones:["Adelantar solo por la izquierda.","Se puede adelantar por cualquier carril.","Adelantar solo por la derecha y volver al carril izquierdo tan pronto como sea seguro.","Usar el arcén para adelantar si hay mucho tráfico."],respuestaCorrecta:2,explicacion:"El adelantamiento debe realizarse por la derecha. Después de adelantar, debe regresar al carril más a la izquierda posible.",pista:"El carril izquierdo es para circular, los demás son para adelantar."},
+      {pregunta:"¿Qué indica una línea continua doble blanca en el centro de la carretera?",opciones:["Zona de adelantamiento permitido.","No debe cruzar ni circular sobre estas líneas, excepto en situaciones muy específicas.","Indica el borde de la carretera.","Es una recomendación, no una orden."],respuestaCorrecta:1,explicacion:"Las líneas dobles blancas continuas prohíben cruzar, excepto para girar a la derecha si la línea más cercana es discontinua, o para evitar una obstrucción.",pista:"Las líneas continuas suelen significar prohibición."},
+      {pregunta:"Si su vehículo se avería en un túnel, ¿qué es lo primero que debe hacer?",opciones:["Intentar reparar el vehículo usted mismo.","Salir del vehículo y caminar para buscar ayuda.","Encender las luces de emergencia, apagar el motor y permanecer en el vehículo esperando ayuda.","Empujar el vehículo hasta la salida."],respuestaCorrecta:2,explicacion:"En caso de avería en un túnel, debe encender las luces de emergencia, apagar el motor, permanecer en su vehículo con el cinturón puesto y esperar las instrucciones del personal.",pista:"La seguridad es lo primero. Salir del vehículo en un túnel es peligroso."},
+      {pregunta:"¿Cuál es la 'regla de los dos segundos'?",opciones:["El tiempo máximo permitido para estacionar en una zona de carga.","El tiempo que se debe esperar en una señal de ceda el paso.","Una forma de medir una distancia de seguimiento segura con el vehículo de adelante.","El tiempo que tarda en cambiar un semáforo de ámbar a rojo."],respuestaCorrecta:2,explicacion:"La 'regla de los dos segundos' sirve para mantener una distancia segura. Debe haber al menos dos segundos de tiempo entre el vehículo de adelante y el suyo.",pista:"Se usa para calcular la distancia de seguimiento en movimiento."},
+      {pregunta:"¿Está permitido que un ciclista circule sin casco?",opciones:["Sí, si es mayor de 18 años.","No, el uso de casco de seguridad es obligatorio.","Solo es obligatorio en autopistas.","Es muy recomendable para la seguridad, pero el texto del código no especifica la obligatoriedad de un casco aprobado."],respuestaCorrecta:3,explicacion:"Aunque se recomienda encarecidamente usar casco, la ley en Hong Kong no lo hace obligatorio para ciclistas, a diferencia de los motoristas.",pista:"Compara la regla con la de los conductores de motocicletas."},
+      {pregunta:"¿Dónde está prohibido aparcar un vehículo?",opciones:["En una bahía de estacionamiento marcada en una calle con alumbrado.","En una acera o sendero peatonal.","En un aparcamiento designado.","A más de 200 metros de una farola."],respuestaCorrecta:1,explicacion:"Está prohibido aparcar en aceras, senderos peatonales, medianas, etc.",pista:"Piensa en los lugares reservados para los peatones."},
+      {pregunta:"¿Cuál es el límite de alcohol en aliento para los conductores en Hong Kong?",opciones:["50 microgramos por 100ml","35 microgramos por 100ml","22 microgramos por 100ml","Tolerancia cero"],respuestaCorrecta:2,explicacion:"El límite es de 22 microgramos de alcohol por 100 mililitros de aliento.",pista:"Es un número específico y bajo."},
+      {pregunta:"Un niño menor de qué edad debe ir en un sistema de retención infantil en el asiento delantero?",opciones:["5 años","3 años","7 años","10 años"],respuestaCorrecta:1,explicacion:"Los niños menores de 3 años deben ser sujetados por un sistema de retención infantil homologado cuando viajen en los asientos delanteros.",pista:"La ley es muy estricta con los niños más pequeños."},
+      {pregunta:"¿Cuándo debe usar los faros?",opciones:["Solo cuando está completamente oscuro","Durante las horas de oscuridad o con poca visibilidad","Solo en carreteras sin alumbrado público","Solo al conducir a más de 50 km/h"],respuestaCorrecta:1,explicacion:"Debe encender los faros con poca visibilidad o durante las horas de oscuridad, incluyendo el anochecer y el amanecer.",pista:"El principio es 'ver y ser visto'."},
+      {pregunta:"¿Qué indica una señal triangular con un borde rojo?",opciones:["Una instrucción obligatoria","Un peligro más adelante","Restricciones de estacionamiento","El inicio de una autopista"],respuestaCorrecta:1,explicacion:"Las señales triangulares con bordes rojos son señales de advertencia, diseñadas para alertar a los conductores sobre peligros potenciales más adelante.",pista:"Piensa en qué forma se utiliza para decirte que tengas cuidado."},
+      {pregunta:"¿Cuál es la regla para usar un teléfono móvil mientras se conduce?",opciones:["Es ilegal sostener y usar un teléfono móvil mientras se conduce.","Se permite si el tráfico es ligero.","Solo se permite para llamadas cortas.","Es legal en cualquier momento."],respuestaCorrecta:0,explicacion:"Usar un teléfono móvil de mano mientras se conduce es una distracción grave y está prohibido por ley.",pista:"La seguridad vial prohíbe las distracciones manuales."},
+      {pregunta:"En una autopista de tres carriles, ¿qué carril debe usar normalmente?",opciones:["El carril de la izquierda.","El carril central.","El carril de la derecha.","Cualquier carril está bien."],respuestaCorrecta:0,explicacion:"La regla general es mantenerse a la izquierda a menos que se esté adelantando.",pista:"En países con conducción por la izquierda, la norma es 'manténgase a la izquierda'."},
+      {pregunta:"¿Qué significa una única línea amarilla pintada en el bordillo?",opciones:["No estacionar durante las horas indicadas en una señal cercana.","No estacionar en ningún momento.","Zona de carga y descarga.","Estacionamiento de corta duración permitido."],respuestaCorrecta:0,explicacion:"Una única línea amarilla indica una restricción de estacionamiento durante horarios específicos.",pista:"Una línea significa restricción parcial, dos líneas significan restricción total."},
+      {pregunta:"¿Cuándo puede cruzar una línea blanca continua en su lado de la carretera?",opciones:["Para girar en una entrada o calle lateral, o para evitar una obstrucción estacionaria.","Siempre que no haya tráfico en sentido contrario.","Para adelantar a un vehículo lento.","Nunca está permitido."],respuestaCorrecta:0,explicacion:"No debe cruzar una línea blanca continua excepto en algunas circunstancias específicas, como girar o pasar una obstrucción.",pista:"Las líneas continuas son restrictivas, pero con excepciones lógicas."},
+      {pregunta:"¿Qué debe hacer al acercarse a un paso a nivel con luces rojas intermitentes?",opciones:["Detenerse antes de la barrera o la línea de detención y esperar.","Proceder con precaución si no ve un tren.","Acelerar para cruzar rápidamente.","Tocar la bocina y continuar."],respuestaCorrecta:0,explicacion:"Las luces rojas intermitentes en un paso a nivel significan que se acerca un tren. Debe detenerse y no continuar hasta que las luces dejen de parpadear.",pista:"Las luces rojas intermitentes siempre significan detenerse."},
+      {pregunta:"¿Quién tiene prioridad en un cruce sin señalizar?",opciones:["Nadie tiene prioridad automática; debe proceder con precaución.","El vehículo en la carretera más ancha.","El primer vehículo en llegar.","El vehículo que viene por la derecha."],respuestaCorrecta:0,explicacion:"En un cruce sin señalizar, los conductores deben ser cautelosos y estar preparados para ceder el paso.",pista:"La ausencia de señales exige máxima precaución."},
+      {pregunta:"¿Qué indica una señal circular azul?",opciones:["Una instrucción obligatoria.","Información sobre un destino.","Una advertencia de peligro.","Una prohibición."],respuestaCorrecta:0,explicacion:"Las señales circulares azules dan una instrucción positiva y obligatoria que debe seguirse.",pista:"El azul circular es una orden, no una sugerencia."},
+      {pregunta:"¿Cuál es la profundidad mínima legal de la banda de rodadura de los neumáticos?",opciones:["1 mm","1.6 mm","2 mm","0.5 mm"],respuestaCorrecta:0,explicacion:"Los neumáticos deben tener una profundidad de banda de rodadura de al menos 1 mm en tres cuartas partes del ancho de la banda y en toda la circunferencia exterior.",pista:"Es un requisito mínimo de seguridad."},
+      {pregunta:"Si le deslumbran los faros de un vehículo que se aproxima, ¿qué debe hacer?",opciones:["Reducir la velocidad o detenerse, y mirar hacia el bordillo izquierdo.","Encender las luces altas en respuesta.","Mirar directamente a las luces para ajustar la vista.","Cerrar los ojos brevemente."],respuestaCorrecta:0,explicacion:"No mire fijamente las luces. Reduzca la velocidad y fije la mirada en el lado izquierdo de la carretera.",pista:"La seguridad dicta evitar la fuente del deslumbramiento."},
+      {pregunta:"¿Cuándo está permitido usar la bocina en una zona urbana por la noche?",opciones:["Solo cuando otro usuario de la vía representa un peligro.","Para saludar a alguien.","Si no puede encontrar una plaza de aparcamiento.","Nunca."],respuestaCorrecta:0,explicacion:"La bocina no debe usarse en zonas urbanas por la noche, excepto para advertir a otros de un peligro inminente.",pista:"El ruido nocturno está restringido excepto en emergencias."},
+      {pregunta:"¿Qué significa una 'box junction' (intersección con cuadrícula amarilla)?",opciones:["No debe entrar en la cuadrícula a menos que su salida esté despejada.","Debe detenerse en la cuadrícula si el semáforo está en rojo.","Es solo para autobuses.","Puede esperar en la cuadrícula hasta 30 segundos."],respuestaCorrecta:0,explicacion:"El propósito de una 'box junction' es mantener la intersección despejada para el tráfico que cruza.",pista:"El lema es 'no bloquear la cuadrícula'."},
+      {pregunta:"Al dar marcha atrás, ¿quién es responsable de garantizar que sea seguro?",opciones:["El conductor.","Los peatones deben apartarse.","El pasajero.","Otros conductores deben ceder el paso."],respuestaCorrecta:0,explicacion:"El conductor es totalmente responsable de comprobar que la zona detrás del vehículo esté libre antes y durante la marcha atrás.",pista:"El que realiza la maniobra de riesgo es el responsable."},
+      {pregunta:"¿Qué es el 'aquaplaning'?",opciones:["Cuando los neumáticos pierden contacto con la superficie de la carretera y se deslizan sobre una película de agua.","Conducir muy cerca del agua.","Un tipo especial de neumático para lluvia.","Una técnica de conducción en mojado."],respuestaCorrecta:0,explicacion:"El aquaplaning es peligroso ya que resulta en una pérdida del control de la dirección y el frenado.",pista:"'Aqua' significa agua. 'Planing' significa deslizarse."},
+      {pregunta:"¿En qué situación puede adelantar por la izquierda?",opciones:["Cuando el vehículo de delante señaliza para girar a la derecha, o en colas de tráfico lento donde el carril izquierdo se mueve más rápido.","En cualquier carretera de dos carriles.","Si el conductor de delante va demasiado lento.","Nunca."],respuestaCorrecta:0,explicacion:"Adelantar por la izquierda está generalmente prohibido pero se permite en situaciones específicas.",pista:"Hay excepciones a la regla general de adelantamiento."},
+      {pregunta:"¿Qué debe hacer si un coche de policía detrás de usted enciende sus luces o su sirena?",opciones:["Detenerse en un lugar seguro tan pronto como sea posible.","Acelerar para apartarse del camino.","Ignorarlo a menos que le hagan señas.","Conducir hasta la comisaría más cercana."],respuestaCorrecta:0,explicacion:"Reconozca el vehículo policial y encuentre un lugar seguro y conveniente para detenerse.",pista:"Las luces y sirenas de la policía son una orden para detenerse de forma segura."},
+      {pregunta:"¿Qué significa una flecha de filtro verde en un semáforo?",opciones:["Puede continuar en la dirección de la flecha, incluso si la luz principal está en rojo.","Debe prepararse para detenerse.","El tráfico en esa dirección tiene prioridad, pero debe ceder el paso.","Solo los autobuses pueden seguir la flecha."],respuestaCorrecta:0,explicacion:"Una flecha de filtro verde le da prioridad para continuar en esa dirección, pero aun así debe tener cuidado con los peatones u otro tráfico.",pista:"La flecha verde anula la luz principal para un movimiento específico."},
+      {pregunta:"¿Cuál es la concentración máxima legal de alcohol en sangre para conductores en Hong Kong?",opciones:["50 miligramos de alcohol por 100 ml de sangre.","80 miligramos de alcohol por 100 ml de sangre.","20 miligramos de alcohol por 100 ml de sangre.","100 miligramos de alcohol por 100 ml de sangre."],respuestaCorrecta:0,explicacion:"El límite es de 50mg/100ml en sangre, 67mg/100ml en orina, o 22mcg/100ml en aliento.",pista:"Recuerde los tres números del límite legal: 50, 67, 22."},
+      {pregunta:"Al estacionar en una pendiente cuesta arriba, ¿cómo debe colocar las ruedas?",opciones:["Girelas alejándolas del bordillo y deje el coche en primera marcha.","Girelas hacia el bordillo.","Déjelas rectas.","No importa la dirección."],respuestaCorrecta:0,explicacion:"Si el freno de mano falla, las ruedas golpearán el bordillo e impedirán que el coche ruede hacia el tráfico.",pista:"Arriba, lejos. Abajo, hacia."},
+      {pregunta:"¿Cuándo debe informar de un accidente de tráfico a la policía?",opciones:["Si alguien resulta herido, o si hay daños a otro vehículo o propiedad y el propietario no está presente.","Solo si el daño supera una cierta cantidad.","Siempre, independientemente de los daños.","Solo si es culpa suya."],respuestaCorrecta:0,explicacion:"Debe detenerse después de cualquier accidente e informarlo a la policía en un plazo de 24 horas si hay heridos.",pista:"La ley exige informar si hay lesiones o no se puede contactar al propietario."},
+      {pregunta:"¿Qué significa una señal con una 'P' blanca sobre un fondo azul?",opciones:["Estacionamiento permitido.","Parada de autobús.","Solo para la policía.","Zona peatonal."],respuestaCorrecta:0,explicacion:"Esta señal informativa indica una zona de estacionamiento designada.",pista:"'P' es universalmente para 'Parking'."},
+      {pregunta:"Antes de hacer un cambio de sentido (U-turn), ¿cuál es la comprobación más importante?",opciones:["Que sea seguro, legal y no obstruya a otros usuarios de la vía.","Que haya suficiente espacio.","Que no haya coches de policía cerca.","Que pueda hacerlo rápidamente."],respuestaCorrecta:0,explicacion:"Los cambios de sentido son maniobras peligrosas. Debe asegurarse de tener una visión clara.",pista:"Seguridad, legalidad y conveniencia son los tres pilares."},
+      {pregunta:"¿Cuál es el propósito de las 'bandas sonoras' en la carretera?",opciones:["Alertar a los conductores distraídos de un peligro.","Reducir la velocidad del tráfico.","Medir la velocidad de los vehículos.","Marcar el borde de la carretera."],respuestaCorrecta:0,explicacion:"La vibración y el ruido de las bandas sonoras están diseñados para llamar la atención del conductor.",pista:"Hacen un ruido para 'despertarle'."},
+      {pregunta:"Ve a un peatón con un bastón blanco y bandas rojas. ¿Qué indica esto?",opciones:["La persona es sordociega.","La persona es un guía turístico.","La persona es un trabajador de la construcción.","La persona es ciega."],respuestaCorrecta:0,explicacion:"Un bastón blanco indica que la persona es ciega. Las bandas rojas indican que también es sorda.",pista:"Las bandas rojas añaden una segunda discapacidad."},
+      {pregunta:"¿Qué es 'coasting' (ir en punto muerto)?",opciones:["Viajar en punto muerto o con el embrague presionado.","Un modo de conducción para ahorrar combustible.","Conducir sin usar los frenos.","Una técnica para descender pendientes."],respuestaCorrecta:0,explicacion:"'Coasting' es peligroso porque reduce el control del conductor sobre el vehículo, especialmente el frenado.",pista:"Significa desconectar el motor de las ruedas."},
+      {pregunta:"¿Cuándo puede usar las luces de emergencia mientras conduce?",opciones:["Solo para advertir a los conductores detrás de usted de un peligro en una autopista sin restricciones.","Cuando llueve mucho.","Si va a estacionar ilegalmente por un momento.","Cuando se ha perdido."],respuestaCorrecta:0,explicacion:"Usar las luces de emergencia mientras se está en movimiento generalmente no está permitido, con esta excepción específica.",pista:"Su uso mientras se conduce es una advertencia muy específica."},
+      {pregunta:"Con lluvia intensa, su distancia de frenado puede ser...",opciones:["Al menos el doble que en condiciones secas.","La misma que en condiciones secas.","Un 50% más larga.","Un poco más larga."],respuestaCorrecta:0,explicacion:"Las carreteras mojadas reducen significativamente el agarre de los neumáticos. Se recomienda la 'regla de los cuatro segundos'.",pista:"El agua actúa como lubricante entre el neumático y la carretera."},
+      {pregunta:"¿Qué significa una señal que muestra una bicicleta dentro de un círculo rojo?",opciones:["Prohibido circular en bicicleta.","Ruta para ciclistas.","Estacionamiento de bicicletas.","Peligro, ciclistas cerca."],respuestaCorrecta:0,explicacion:"Un círculo rojo indica una prohibición. Esta señal significa que los ciclistas no están permitidos en esta carretera.",pista:"Círculo rojo = No."},
+      {pregunta:"Si toma la ruta equivocada y se encuentra en una calle de un solo sentido, ¿qué debe hacer?",opciones:["Continuar hasta el final de la calle y encontrar un lugar seguro para dar la vuelta.","Dar marcha atrás con cuidado hasta la salida.","Detenerse y esperar ayuda.","Girar en la primera oportunidad, incluso si es ilegal."],respuestaCorrecta:0,explicacion:"No debe dar marcha atrás en una calle de un solo sentido. Proceda con cuidado hasta el siguiente cruce.",pista:"Ir en contra del flujo de tráfico es extremadamente peligroso."},
+      {pregunta:"¿Qué debe comprobar antes de iniciar un viaje en condiciones de niebla?",opciones:["Que todas sus luces funcionen y estén limpias.","La presión de los neumáticos.","El nivel de aceite.","La ruta en el GPS."],respuestaCorrecta:0,explicacion:"La visibilidad es crucial en la niebla. Asegúrese de que sus faros, luces traseras y luces antiniebla estén todos operativos.",pista:"En la niebla, 'ver y ser visto' es lo más importante."},
+      {pregunta:"¿Quién es responsable de asegurar que un niño pasajero use el cinturón de seguridad?",opciones:["El conductor.","El propio niño.","El padre, incluso si no está en el coche.","El pasajero del asiento delantero."],respuestaCorrecta:0,explicacion:"El conductor tiene la responsabilidad legal de que los pasajeros menores de cierta edad estén correctamente sujetos.",pista:"El capitán del barco es responsable de todos a bordo."},
+      {pregunta:"Al acercarse a un semáforo que ha estado en verde durante un tiempo, ¿qué debe hacer?",opciones:["Estar preparado para detenerse, ya que puede cambiar.","Acelerar para pasarlo antes de que cambie.","Mantener la misma velocidad.","Mirar al conductor de al lado."],respuestaCorrecta:0,explicacion:"Un semáforo en verde 'viejo' es probable que cambie a ámbar. Anticipe esto y esté preparado para detenerse de forma segura.",pista:"Nada es permanente, especialmente los semáforos en verde."},
+      {pregunta:"Está esperando para salir de una vía secundaria. Un vehículo grande está girando desde la derecha. ¿Por qué debería esperar?",opciones:["El vehículo grande puede ocultar su visión del tráfico que se aproxima, especialmente motociclistas.","Los vehículos grandes siempre tienen prioridad.","Podría rayar su coche.","El conductor podría necesitar más espacio."],respuestaCorrecta:0,explicacion:"Un vehículo grande puede crear un gran punto ciego. Espere hasta tener una visión clara de la carretera.",pista:"Lo que no puede ver puede hacerle daño."},
+      {pregunta:"¿Cuándo debe usar las luces antiniebla?",opciones:["Solo cuando la visibilidad está seriamente reducida, generalmente a menos de 100 metros.","Tan pronto como empiece a llover.","Por la noche en todas las carreteras.","En zonas urbanas con poca luz."],respuestaCorrecta:0,explicacion:"Las luces antiniebla son muy brillantes y pueden deslumbrar a otros conductores. Deben apagarse tan pronto como la visibilidad mejore.",pista:"Use luces para la niebla solo en la niebla."},
+      {pregunta:"En una carretera con alumbrado público, ¿cuál es el límite de velocidad por defecto?",opciones:["50 km/h.","70 km/h.","30 km/h.","80 km/h."],respuestaCorrecta:0,explicacion:"En Hong Kong, una carretera con alumbrado público se considera generalmente una zona urbana y tiene un límite de velocidad por defecto de 50 km/h.",pista:"Es el límite de velocidad estándar en ciudad."},
+      {pregunta:"¿Qué significa una luz ámbar intermitente en un paso de peatones 'pelican'?",opciones:["Ceda el paso a los peatones en el cruce. Si está despejado, puede proceder.","Deténgase y espere la luz verde.","Proceda, los peatones deben esperar.","El semáforo está averiado."],respuestaCorrecta:0,explicacion:"Después de la luz roja, el ámbar intermitente permite que el tráfico se mueva si no hay más peatones cruzando.",pista:"Ámbar intermitente significa ceder el paso, no detenerse obligatoriamente."}
+    ],
+    en: [
+      {pregunta:"What must you do when you see a 'Stop' sign at a junction?",opciones:["Slow down and proceed if there is no traffic.","Stop completely behind the line, even if there is no traffic.","Give way only to traffic from the right.","Honk the horn to warn other drivers."],respuestaCorrecta:1,explicacion:"A 'Stop' sign requires you to stop completely behind the stop line, regardless of whether there is visible traffic, and give way before proceeding.",pista:"This sign requires a full stop, not just slowing down."},
+      {pregunta:"At a roundabout, which traffic must you give way to before entering?",opciones:["Traffic approaching from the left.","Traffic already circulating within the roundabout (coming from your right).","Larger vehicles.","You do not need to give way; you have priority."],respuestaCorrecta:1,explicacion:"When approaching a roundabout, you must give way to any traffic already on it, which will be approaching from your right.",pista:"Those already in the circle have the right-of-way."},
+      {pregunta:"What does a flashing 'Green Man' light mean for pedestrians?",opciones:["You can start to cross the street.","You must finish crossing if already on the crosswalk, but do not start to cross.","Traffic will come to a complete stop.","It indicates a traffic light malfunction."],respuestaCorrecta:1,explicacion:"A flashing 'Green Man' means pedestrians should not start to cross, but if they have already started, they have time to reach the pavement or a central refuge.",pista:"Flashing is a warning not to start crossing."},
+      {pregunta:"It is prohibited to cross the street within what distance of a 'Green Man' crossing or a footbridge?",opciones:["5 meters","10 meters","15 meters","There is no specific distance."],respuestaCorrecta:2,explicacion:"Crossing the road is prohibited within 15 meters of a footbridge, subway, or 'Green Man' crossing.",pista:"It's a standardized safety distance."},
+      {pregunta:"When driving at night, when should you dip your high beams?",opciones:["Only in urban areas.","When there are streetlights or when another vehicle is approaching.","Only when a vehicle is coming towards you.","It's not necessary to dip them if there is no traffic."],respuestaCorrecta:1,explicacion:"You should dip your high beams where there is street lighting or to avoid dazzling other road users.",pista:"The goal is not to dazzle anyone."},
+      {pregunta:"What is the main rule for overtaking on a dual carriageway?",opciones:["Overtake only on the left.","You can overtake in any lane.","Overtake only on the right and return to the left lane as soon as it is safe.","Use the hard shoulder to overtake in heavy traffic."],respuestaCorrecta:2,explicacion:"Overtaking must be done on the right. After overtaking, you should move back to the leftmost lane possible.",pista:"The left lane is for cruising, the others are for overtaking."},
+      {pregunta:"What does a double continuous white line in the middle of the road indicate?",opciones:["Permitted overtaking zone.","You must not cross or straddle these lines, except in very specific situations.","It indicates the edge of the road.","It is a recommendation, not an order."],respuestaCorrecta:1,explicacion:"Double continuous white lines prohibit crossing, except to turn right if the line nearer to you is broken, or to avoid an obstruction.",pista:"Solid lines usually mean prohibition."},
+      {pregunta:"If your vehicle breaks down in a tunnel, what is the first thing you should do?",opciones:["Try to repair the vehicle yourself.","Get out of the vehicle and walk to get help.","Turn on your hazard lights, switch off the engine, and stay in your vehicle to wait for help.","Push the vehicle to the exit."],respuestaCorrecta:2,explicacion:"In case of a breakdown in a tunnel, you should switch on your hazard lights, turn off the engine, remain in your vehicle with your seatbelt on, and await instructions from tunnel staff.",pista:"Safety first. Exiting a vehicle in a tunnel is dangerous."},
+      {pregunta:"What is the 'two-second rule'?",opciones:["The maximum time allowed for parking in a loading zone.","The time you should wait at a yield sign.","A method to measure a safe following distance from the vehicle ahead.","The time it takes for a traffic light to change from amber to red."],respuestaCorrecta:2,explicacion:"The 'two-second rule' is a technique to maintain a safe distance. There should be at least a two-second time gap between the vehicle in front and your vehicle.",pista:"It's used to calculate following distance while in motion."},
+      {pregunta:"Is a cyclist allowed to ride without a helmet?",opciones:["Yes, if they are over 18.","No, wearing a safety helmet is mandatory.","It is only mandatory on expressways.","It is highly recommended for safety, but the code does not specify the mandatory use of an approved helmet."],respuestaCorrecta:3,explicacion:"Although wearing a correctly fitted safety helmet is strongly recommended, the law in Hong Kong does not make it mandatory for cyclists.",pista:"Compare the rule with the one for motorcycle riders."},
+      {pregunta:"Where are you NOT allowed to park your vehicle?",opciones:["In a marked bay on a road with street lighting","On a pavement or footpath","In a designated car park","More than 200 meters from a street light"],respuestaCorrecta:1,explicacion:"Parking on pavements, footpaths, central reservations, etc. is explicitly forbidden.",pista:"Think about places reserved for pedestrians."},
+      {pregunta:"What is the prescribed breath alcohol limit for drivers in Hong Kong?",opciones:["50 micrograms per 100ml","35 micrograms per 100ml","22 micrograms per 100ml","Zero tolerance"],respuestaCorrecta:2,explicacion:"The limit is 22 micrograms of alcohol per 100 millilitres of breath.",pista:"It's a specific, low number to deter drunk driving."},
+      {pregunta:"A child under what age must be in an approved child restraint in the front seat of a private car?",opciones:["5 years","3 years","7 years","10 years"],respuestaCorrecta:1,explicacion:"Children under the age of 3 must be restrained by an approved child restraint device when travelling in the front seats.",pista:"The law is very strict for the youngest children."},
+      {pregunta:"When must you use your headlamps?",opciones:["Only when it's completely dark","During the hours of darkness (including dusk and dawn) or in poor visibility","Only on roads without streetlights","Only when driving faster than 50 km/h"],respuestaCorrecta:1,explicacion:"You must switch on your headlamps in poor visibility or during the hours of darkness, including dusk and dawn.",pista:"The principle is 'to see and be seen'."},
+      {pregunta:"What does a triangular sign with a red border warn of?",opciones:["A mandatory instruction","A hazard ahead","Parking restrictions","The start of an expressway"],respuestaCorrecta:1,explicacion:"Triangular signs with red borders are warning signs, designed to alert drivers to potential dangers ahead.",pista:"Think about what shape is used to tell you to be careful."},
+      {pregunta:"What is the rule for using a mobile phone while driving?",opciones:["It is illegal to hold and use a mobile phone while driving.","It's allowed if traffic is light.","Only short calls are permitted.","It is legal at any time."],respuestaCorrecta:0,explicacion:"Using a hand-held mobile phone while driving is a serious distraction and is prohibited by law.",pista:"Road safety prohibits manual distractions."},
+      {pregunta:"On a three-lane expressway, which lane should you normally use?",opciones:["The left-hand lane.","The middle lane.","The right-hand lane.","Any lane is fine."],respuestaCorrecta:0,explicacion:"The general rule is to keep left unless overtaking.",pista:"In left-hand traffic countries, the rule is 'keep left'."},
+      {pregunta:"What does a single yellow line painted on the kerb mean?",opciones:["No parking during the times shown on a nearby sign.","No parking at any time.","Loading and unloading zone.","Short-term parking allowed."],respuestaCorrecta:0,explicacion:"A single yellow line indicates a restriction on parking, which applies during specific times.",pista:"One line means partial restriction, two lines mean total restriction."},
+      {pregunta:"When may you cross a solid white line on your side of the road?",opciones:["To turn into a driveway or side road, or to avoid a stationary obstruction.","Whenever there is no oncoming traffic.","To overtake a slow vehicle.","It is never permitted."],respuestaCorrecta:0,explicacion:"You must not cross a solid white line except in a few specific circumstances, such as turning or passing an obstruction.",pista:"Solid lines are restrictive, but with logical exceptions."},
+      {pregunta:"What should you do when approaching a level crossing with flashing red lights?",opciones:["Stop before the barrier or stop line and wait.","Proceed with caution if you don't see a train.","Speed up to cross quickly.","Honk your horn and continue."],respuestaCorrecta:0,explicacion:"Flashing red lights at a level crossing mean a train is approaching. You must stop until the lights stop flashing.",pista:"Flashing red lights always mean stop."},
+      {pregunta:"Who has priority at an unmarked crossroads?",opciones:["No one has automatic priority; you should proceed with caution.","The vehicle on the wider road.","The first vehicle to arrive.","The vehicle coming from the right."],respuestaCorrecta:0,explicacion:"At an unmarked junction, drivers must be cautious and be prepared to give way.",pista:"Absence of signs demands maximum caution."},
+      {pregunta:"What does a circular blue sign indicate?",opciones:["A mandatory instruction.","Information about a destination.","A warning of a hazard.","A prohibition."],respuestaCorrecta:0,explicacion:"Blue circular signs give a positive, mandatory instruction that must be followed.",pista:"Blue circular is a command, not a suggestion."},
+      {pregunta:"What is the minimum legal tread depth for tyres on a private car?",opciones:["1 mm","1.6 mm","2 mm","0.5 mm"],respuestaCorrecta:0,explicacion:"Tyres must have a tread depth of at least 1 mm across three-quarters of the breadth of the tread and around the entire outer circumference.",pista:"It's a minimum safety requirement for grip."},
+      {pregunta:"If you are dazzled by the headlights of an oncoming vehicle, what should you do?",opciones:["Slow down or stop, and look towards the left-hand kerb.","Flash your high beams in response.","Stare at the lights to adjust your vision.","Close your eyes briefly."],respuestaCorrecta:0,explicacion:"Do not stare at the lights. Slow down and fix your gaze on the left side of the road.",pista:"Safety dictates avoiding the source of the dazzle."},
+      {pregunta:"When are you allowed to use the horn in a built-up area at night?",opciones:["Only when another road user poses a danger.","To greet someone.","If you can't find a parking space.","Never."],respuestaCorrecta:0,explicacion:"The horn should not be used in built-up areas at night, except to warn others of imminent danger.",pista:"Night-time noise is restricted except for emergencies."},
+      {pregunta:"What does a box junction (yellow criss-cross lines) mean?",opciones:["You must not enter the box unless your exit is clear.","You should stop in the box if your traffic light is red.","It is for buses only.","You can wait in the box for up to 30 seconds."],respuestaCorrecta:0,explicacion:"The purpose of a box junction is to keep the junction clear for through-traffic.",pista:"The motto is 'don't block the box'."},
+      {pregunta:"When reversing, who is responsible for ensuring it is safe?",opciones:["The driver.","Pedestrians should move out of the way.","The passenger.","Other drivers must give way."],respuestaCorrecta:0,explicacion:"The driver is fully responsible for checking that the area behind the vehicle is clear before and during reversing.",pista:"The one making the risky maneuver is responsible."},
+      {pregunta:"What is 'aquaplaning'?",opciones:["When tyres lose contact with the road surface and ride on a film of water.","Driving very close to water.","A special type of rain tyre.","A wet weather driving technique."],respuestaCorrecta:0,explicacion:"Aquaplaning is dangerous as it results in a loss of steering and braking control.",pista:"'Aqua' means water. 'Planing' means gliding."},
+      {pregunta:"In what situation can you overtake on the left?",opciones:["When the vehicle in front is signalling to turn right, or in slow-moving queues where the left lane is moving faster.","On any two-lane road.","If the driver in front is going too slow.","Never."],respuestaCorrecta:0,explicacion:"Overtaking on the left is generally forbidden but is permitted in specific situations.",pista:"There are exceptions to the general overtaking rule."},
+      {pregunta:"What should you do if a police car behind you flashes its headlights or sounds its siren?",opciones:["Pull over and stop in a safe place as soon as possible.","Speed up to get out of the way.","Ignore it unless they signal you.","Drive to the nearest police station."],respuestaCorrecta:0,explicacion:"Acknowledge the police vehicle and find a safe, convenient place to stop.",pista:"Police lights and sirens are a command to stop safely."},
+      {pregunta:"What does a green filter arrow on a traffic light mean?",opciones:["You may proceed in the direction of the arrow, even if the main light is red.","You must prepare to stop.","Traffic in that direction has priority, but you must give way.","Only buses can follow the arrow."],respuestaCorrecta:0,explicacion:"A green filter arrow gives you priority to proceed in that direction, but you should still be cautious.",pista:"The green arrow overrides the main light for a specific movement."},
+      {pregunta:"What is the legal maximum blood alcohol concentration (BAC) for drivers in Hong Kong?",opciones:["50 milligrams per 100 ml.","80 milligrams per 100 ml.","20 milligrams per 100 ml.","100 milligrams per 100 ml."],respuestaCorrecta:0,explicacion:"The limit is 50mg/100ml in blood, 67mg/100ml in urine, or 22mcg/100ml in breath.",pista:"Remember the three legal limit numbers: 50, 67, 22."},
+      {pregunta:"When parking on a hill facing uphill, how should you set your wheels?",opciones:["Turn them away from the kerb and leave the car in first gear.","Turn them towards the kerb.","Leave them straight.","It does not matter."],respuestaCorrecta:0,explicacion:"If the handbrake fails, the wheels will hit the kerb and stop the car from rolling into traffic.",pista:"Uphill, away. Downhill, towards."},
+      {pregunta:"When must you report a road accident to the police?",opciones:["If anyone is injured, or if there is damage to another vehicle or property and the owner is not present.","Only if the damage exceeds a certain amount.","Always, regardless of damage.","Only if it is your fault."],respuestaCorrecta:0,explicacion:"You must stop after any accident and report it to the police within 24 hours if there are injuries.",pista:"The law requires reporting if there are injuries."},
+      {pregunta:"What does a sign with a white 'P' on a blue background mean?",opciones:["Parking is permitted.","Bus stop.","Police only.","Pedestrian zone."],respuestaCorrecta:0,explicacion:"This is an informational sign indicating a designated parking area.",pista:"'P' is universally for 'Parking'."},
+      {pregunta:"Before making a U-turn, what is the most important check?",opciones:["That it is safe, legal, and will not obstruct other road users.","That there is enough space.","That no police cars are nearby.","That you can do it quickly."],respuestaCorrecta:0,explicacion:"U-turns are dangerous manoeuvres. You must ensure you have a clear view.",pista:"Safety, legality, and convenience are the three pillars."},
+      {pregunta:"What is the purpose of 'rumble strips' on the road?",opciones:["To alert inattentive drivers to a hazard.","To slow traffic down.","To measure vehicle speed.","To mark the edge of the road."],respuestaCorrecta:0,explicacion:"The vibration and noise from rumble strips are designed to get a driver's attention.",pista:"They make a 'rumble' sound to wake you up."},
+      {pregunta:"You see a pedestrian with a white stick and red bands. What does this indicate?",opciones:["The person is deaf and blind.","The person is a tour guide.","The person is a construction worker.","The person is blind."],respuestaCorrecta:0,explicacion:"A white stick indicates the person is blind. Red bands indicate they are also deaf.",pista:"The red bands add a second impairment."},
+      {pregunta:"What is coasting?",opciones:["Travelling in neutral or with the clutch pressed down.","A fuel-saving driving mode.","Driving without using the brakes.","A technique for going down hills."],respuestaCorrecta:0,explicacion:"Coasting is dangerous because it reduces the driver's control, particularly braking and steering.",pista:"It means disconnecting the engine from the wheels."},
+      {pregunta:"When can you use hazard warning lights while driving?",opciones:["Only to warn drivers behind you of a hazard on a motorway or unrestricted dual carriageway.","When it's raining heavily.","If you're going to park illegally for a moment.","When you are lost."],respuestaCorrecta:0,explicacion:"Using hazard lights while moving is generally not allowed, with this specific exception.",pista:"Their use while driving is a very specific warning."},
+      {pregunta:"In heavy rain, your stopping distance can be...",opciones:["At least double that of dry conditions.","The same as in dry conditions.","50% longer.","Slightly longer."],respuestaCorrecta:0,explicacion:"Wet roads significantly reduce tyre grip. The 'four-second rule' is recommended.",pista:"Water acts as a lubricant between the tyre and the road."},
+      {pregunta:"What does a sign showing a bicycle inside a red circle mean?",opciones:["No cycling.","Cycle route.","Bicycle parking.","Danger, cyclists nearby."],respuestaCorrecta:0,explicacion:"A red circle indicates a prohibition. This sign means cyclists are not allowed on this road.",pista:"Red circle = No."},
+      {pregunta:"If you take the wrong route and find yourself on a one-way street, what should you do?",opciones:["Continue to the end of the road and find a safe place to turn around.","Reverse carefully back out.","Stop and wait for help.","Turn at the first opportunity, even if illegal."],respuestaCorrecta:0,explicacion:"You must not reverse back down a one-way street. Proceed carefully to the next junction.",pista:"Going against the flow of traffic is extremely dangerous."},
+      {pregunta:"What should you check before starting a journey in foggy conditions?",opciones:["That all your lights are working and clean.","Your tyre pressure.","Your oil level.","Your route on GPS."],respuestaCorrecta:0,explicacion:"Visibility is crucial in fog. Ensure your headlights, rear lights, and fog lights are all operational.",pista:"In fog, 'see and be seen' is most important."},
+      {pregunta:"Who is responsible for ensuring that a child passenger is wearing a seat belt?",opciones:["The driver.","The child themselves.","The parent, even if not in the car.","The front seat passenger."],respuestaCorrecta:0,explicacion:"The driver holds the legal responsibility for passengers under a certain age being correctly restrained.",pista:"The captain of the ship is responsible for everyone on board."},
+      {pregunta:"When approaching a traffic light that has been green for some time, what should you do?",opciones:["Be prepared to stop, as it may change.","Accelerate to pass it before it changes.","Maintain the same speed.","Look at the driver next to you."],respuestaCorrecta:0,explicacion:"A 'stale' green light is likely to change to amber. Anticipate this and be ready to stop safely.",pista:"Nothing is permanent, especially green lights."},
+      {pregunta:"You are waiting to emerge from a minor road. A large vehicle is turning in from the right. Why should you wait?",opciones:["The large vehicle may obscure your view of oncoming traffic, especially motorcyclists.","Large vehicles always have priority.","You might scratch your car.","The driver might need more room."],respuestaCorrecta:0,explicacion:"A large vehicle can create a large blind spot. Wait until you have a clear view of the road.",pista:"What you can't see can hurt you."},
+      {pregunta:"When should you use your fog lights?",opciones:["Only when visibility is seriously reduced, generally to less than 100 metres.","As soon as it starts to rain.","At night on all roads.","In poorly lit urban areas."],respuestaCorrecta:0,explicacion:"Fog lights are very bright and can dazzle other drivers. They must be switched off as soon as visibility improves.",pista:"Use fog lights for fog only."},
+      {pregunta:"On a road with street lighting, what is the default speed limit unless signs show otherwise?",opciones:["50 km/h.","70 km/h.","30 km/h.","80 km/h."],respuestaCorrecta:0,explicacion:"In Hong Kong, a road with street lighting has a default speed limit of 50 km/h.",pista:"It's the standard city speed limit."},
+      {pregunta:"What does a flashing amber light at a pelican crossing mean?",opciones:["Give way to pedestrians on the crossing. If it is clear, you may proceed.","Stop and wait for the green light.","Proceed, as pedestrians must wait.","The traffic light is faulty."],respuestaCorrecta:0,explicacion:"After the red light, the flashing amber allows traffic to move if there are no more pedestrians crossing.",pista:"Flashing amber means yield, not a mandatory stop."}
+    ],
+    zh: [
+      {pregunta:"當您在十字路口看到「停車」標誌時，您必須做什麼？",opciones:["減速，如果沒有車輛則繼續行駛。","即使沒有車輛，也必須在停車線後完全停下。","只讓路給右邊的車輛。","按喇叭警告其他司機。"],respuestaCorrecta:1,explicacion:"「停車」標誌要求您在停車線後完全停下，無論是否有可見的車輛，並在繼續行駛前讓路。",pista:"此標誌要求完全停車，而不僅僅是減速。"},
+      {pregunta:"在迴旋處，您在駛入前應讓路給哪些車輛？",opciones:["從左方駛近的車輛。","已在迴旋處內行駛的車輛（從您的右方駛來）。","較大的車輛。","無需讓路，您有優先權。"],respuestaCorrecta:1,explicacion:"駛近迴旋處時，您必須讓路給任何已在處內行駛的車輛，這些車輛會從您的右方駛近。",pista:"已在圈內的車輛擁有先行權。"},
+      {pregunta:"閃爍的「綠色人像」燈號對行人來說意味著什麼？",opciones:["您可以開始過馬路。","如已在行人過路處，應繼續前行至路邊；但不要開始橫過。","車輛將會完全停下。","表示交通燈故障。"],respuestaCorrecta:1,explicacion:"閃爍的「綠色人像」燈號表示行人不應開始橫過馬路，但如果已經開始，則有時間到達行人路或中央安全島。",pista:"閃爍是警告，提示不要開始過馬路。"},
+      {pregunta:"在「綠色人像」過路處或行人天橋附近多少米範圍內，禁止橫過馬路？",opciones:["5米","10米","15米","沒有具體距離。"],respuestaCorrecta:2,explicacion:"明確禁止在距離行人天橋、隧道或「綠色人像」過路處15米範圍內橫過馬路。",pista:"這是一個標準化的安全距離。"},
+      {pregunta:"夜間駕駛時，您應在何時轉用低燈？",opciones:["只在市區。","當有街燈照明或有其他車輛駛近時。","只有在有對頭車駛來時。","如果沒有車輛，則無需轉用低燈。"],respuestaCorrecta:1,explicacion:"當有街燈照明時，或為免車頭大燈的光線令其他道路使用者目眩，都應轉用低燈。",pista:"目的是不要影響任何人。"},
+      {pregunta:"在雙程分隔車路上超車的主要規則是什麼？",opciones:["只可從左方超車。","您可以在任何行車線超車。","只可從右方超車，並在安全時盡快返回左線。","如果交通繁忙，可使用路肩超車。"],respuestaCorrecta:2,explicacion:"必須從右方超車。超車後，應盡快駛回最左邊的行車線。",pista:"左線用於正常行駛，其他線用於超車。"},
+      {pregunta:"路中心的雙白實線表示什麼？",opciones:["准許超車區域。","除非在非常特殊的情況下，否則不得跨越或駛越這些線。","表示道路的邊緣。","這只是一個建議，不是命令。"],respuestaCorrecta:1,explicacion:"雙白實線用以分隔相反方向的車流，並禁止跨越。",pista:"實線通常意味著禁止。"},
+      {pregunta:"如果您的車輛在隧道內發生故障，您首先應該做什麼？",opciones:["嘗試自己修理車輛。","離開車輛步行求助。","亮起危險警告燈，關掉引擎，留在車內等待救援。","將車輛推到出口。"],respuestaCorrecta:2,explicacion:"應亮起危險警告燈，關掉引擎，留在車内並扣上安全帶，等待隧道工作人員的指示。",pista:"安全第一。在隧道內離開車輛是危險的。"},
+      {pregunta:"什麼是「兩秒規則」？",opciones:["在裝卸區停車的最長允許時間。","在「讓路」標誌前應等待的時間。","一種量度與前車保持安全行車距離的方法。","交通燈從黃燈轉為紅燈所需的時間。"],respuestaCorrecta:2,explicacion:"「兩秒規則」是一種保持安全距離的技巧。前車駛過某個固定點後，您的車輛應至少相隔兩秒才駛過同一個點。",pista:"它用於計算行駛中的跟車距離。"},
+      {pregunta:"騎單車不戴頭盔是否合法？",opciones:["是的，如果年滿18歲。","不，必須佩戴安全頭盔。","只在快速公路上才需要。","為了安全，非常建議佩戴，但守則未規定必須佩戴認可的頭盔。"],respuestaCorrecta:3,explicacion:"儘管強烈建議佩戴安全頭盔，但香港法律並未強制要求單車騎手佩戴頭盔。",pista:"將此規則與電單車駕駛員的規則進行比較。"},
+      {pregunta:"在哪裡不准停泊車輛？",opciones:["在有街燈的道路上劃定的泊車位內","在行人路或footpath上","在指定的停車場內","距離街燈超過200米"],respuestaCorrecta:1,explicacion:"明確禁止在行人路、footpath、中央分隔帶等地方停泊車輛。",pista:"想想為行人預留的地方。"},
+      {pregunta:"香港司機的訂明呼氣酒精限度是多少？",opciones:["每100毫升50微克","每100毫升35微克","每100毫升22微克","零容忍"],respuestaCorrecta:2,explicacion:"限制為每100毫升呼氣中含有22微克酒精。",pista:"這是一個具體的低數字。"},
+      {pregunta:"幾歲以下的兒童在私家車前座必須使用認可的兒童束縛設備？",opciones:["5歲","3歲","7歲","10歲"],respuestaCorrecta:1,explicacion:"3歲以下的兒童在前座行車時，必須使用認可的兒童束縛設備。",pista:"法律對最年幼的兒童非常嚴格。"},
+      {pregunta:"什麼時候必須使用車頭大燈？",opciones:["只有在完全天黑時","在黑暗時間（包括黃昏和黎明）或能見度低時","只在沒有街燈的道路上","只在車速超過每小時50公里時"],respuestaCorrecta:1,explicacion:"在能見度低或黑暗時間，包括黃昏和黎明，必須亮起車頭大燈。",pista:"原則是「看見和被看見」。"},
+      {pregunta:"帶有紅色邊框的三角形標誌警告什麼？",opciones:["強制性指示","前方有危險","泊車限制","快速公路起點"],respuestaCorrecta:1,explicacion:"帶有紅色邊框的三角形標誌是警告標誌，旨在提醒司機注意前方的潛在危險。",pista:"想想什麼形狀是用來告訴你要小心的。"},
+      {pregunta:"駕駛時使用手提電話的規則是什麼？",opciones:["駕駛或監督學習司機時手持和使用手提電話是違法的。","如果交通稀少則允許。","只允許短時間通話。","任何時候都合法。"],respuestaCorrecta:0,explicacion:"駕駛時使用手提式流動電話是嚴重的分心行為，並為法律所禁止。",pista:"道路安全禁止手動分心。"},
+      {pregunta:"在三線快速公路上，您通常應使用哪條行車線？",opciones:["左線。","中線。","右線。","任何行車線都可以。"],respuestaCorrecta:0,explicacion:"一般規則是除非超車，否則應靠左行駛。",pista:"在靠左行駛的國家，規則是「靠左行駛」。"},
+      {pregunta:"路邊畫的單黃線是什麼意思？",opciones:["在附近標誌所示的時間內不准泊車。","任何時候都不准泊車。","上落客貨區。","允許短時間泊車。"],respuestaCorrecta:0,explicacion:"單黃線表示在特定時間內有泊車限制。",pista:"一條線表示部分限制，兩條線表示完全限制。"},
+      {pregunta:"您何時可以跨越您這邊的白色實線？",opciones:["轉入車道或小路，或避開靜止的障礙物。","只要沒有迎面而來的車輛。","超越慢駛車輛。","絕不允許。"],respuestaCorrecta:0,explicacion:"您不能跨越白色實線，除非在少數特定情況下，例如轉彎或繞過障礙物。",pista:"實線是限制性的，但有合乎邏輯的例外。"},
+      {pregunta:"當接近有閃爍紅燈的平交道時，您應該怎麼做？",opciones:["在欄杆或停車線前停下並等候。","如果您沒有看到火車，小心前進。","加速快速通過。","按喇叭並繼續前進。"],respuestaCorrecta:0,explicacion:"平交道的閃爍紅燈表示有火車駛近。您必須停車，直到燈停止閃爍。",pista:"閃爍的紅燈總是意味著停車。"},
+      {pregunta:"在沒有標誌的十字路口，誰有優先權？",opciones:["沒有人有自動優先權；您應小心前進。","在較寬道路上的車輛。","最先到達的車輛。","從右邊來的車輛。"],respuestaCorrecta:0,explicacion:"在沒有標誌的路口，司機必須小心並準備讓路以避免碰撞。",pista:"沒有標誌需要最高度的謹慎。"},
+      {pregunta:"圓形藍色標誌表示什麼？",opciones:["強制性指示（例如，左轉、小型迴旋處）。","關於目的地的資訊。","危險警告。","禁令。"],respuestaCorrecta:0,explicacion:"藍色圓形標誌給出必須遵守的正面、強制性指示。",pista:"藍色圓形是命令，不是建議。"},
+      {pregunta:"私家車輪胎的法定最小胎紋深度是多少？",opciones:["1毫米","1.6毫米","2毫米","0.5毫米"],respuestaCorrecta:0,explicacion:"輪胎胎紋深度必須在胎紋闊度的四分之三範圍內至少有1毫米。",pista:"這是確保抓地力的最低安全要求。"},
+      {pregunta:"如果您被迎面而來車輛的車頭燈弄得眼花，您該怎麼辦？",opciones:["減速或停車，並望向左邊的路邊。","閃亮您的遠光燈回應。","直視燈光以適應您的視力。","短暫閉上眼睛。"],respuestaCorrecta:0,explicacion:"不要盯著燈光。減速並將視線固定在道路的左側。",pista:"安全起見，應避開眩光的來源。"},
+      {pregunta:"在夜間的已建區內，您何時可以使用響號？",opciones:["只有在其他道路使用者構成危險時。","為了打招呼。","如果您找不到停車位。","永不。"],respuestaCorrecta:0,explicacion:"在夜間的已建區內不應使用響號，除非是為了警告他人有即時危險。",pista:"夜間噪音受到限制，除非是緊急情況。"},
+      {pregunta:"黃色方格路口是什麼意思？",opciones:["除非您的出口暢通，否則不得駛入方格。","如果您的交通燈是紅色，您應停在方格內。","只供巴士使用。","您可以在方格內等候最多30秒。"],respuestaCorrecta:0,explicacion:"黃色方格路口的目的是保持路口暢通，以便交通暢順。",pista:"口號是「不要阻塞方格」。"},
+      {pregunta:"倒車時，誰有責任確保安全？",opciones:["司機。","行人應讓開。","乘客。","其他司機必須讓路。"],respuestaCorrecta:0,explicacion:"司機在倒車前和倒車期間，完全有責任檢查車輛後方沒有行人或障礙物。",pista:"進行危險操作的人應負起責任。"},
+      {pregunta:"什麼是「水漂效應」（aquaplaning）？",opciones:["當輪胎失去與路面的接觸，並在一層水膜上滑行時。","非常靠近水邊駕駛。","一種特殊的雨天輪胎。","一種濕地駕駛技巧。"],respuestaCorrecta:0,explicacion:"水漂效應是危險的，因為它會導致失去轉向和制動控制。",pista:"「Aqua」意為水，「planing」意為滑行。"},
+      {pregunta:"在什麼情況下您可以從左側超車？",opciones:["當前車發出右轉信號時，或在交通緩慢的車龍中，左線移動較快時。","在任何雙線道路上。","如果前車司機開得太慢。","永不。"],respuestaCorrecta:0,explicacion:"從左側超車通常是禁止的，但在特定情況下是允許的。",pista:"一般的超車規則有例外情況。"},
+      {pregunta:"如果您後面的警車閃爍車頭燈或鳴響警報器，您應該怎麼做？",opciones:["盡快在安全的地方靠邊停車。","加速讓開。","除非他們向您招手，否則不予理會。","駛往最近的警察局。"],respuestaCorrecta:0,explicacion:"確認警車的存在，並找一個安全方便的地方停車。",pista:"警燈和警報器是安全停車的命令。"},
+      {pregunta:"交通燈上的綠色箭嘴過濾燈是什麼意思？",opciones:["即使主燈是紅色，您也可以按照箭嘴方向前進。","您必須準備停車。","該方向的交通有優先權，但您必須讓路。","只有巴士可以跟隨箭嘴。"],respuestaCorrecta:0,explicacion:"綠色箭嘴過濾燈給予您在該方向前進的優先權，但您仍應小心行人或其他交通。",pista:"綠色箭嘴優先於特定方向的主燈。"},
+      {pregunta:"香港司機的法定最高血液酒精濃度（BAC）是多少？",opciones:["每100毫升血液含50毫克酒精。","每100毫升血液含80毫克酒精。","每100毫升血液含20毫克酒精。","每100毫升血液含100毫克酒精。"],respuestaCorrecta:0,explicacion:"法律對酒精有嚴格限制。限制為血液中每100毫升含50毫克。",pista:"記住三個法定限制數字：50、67、22。"},
+      {pregunta:"在上坡路段泊車時，您應如何放置車輪？",opciones:["將車輪轉向遠離路邊的方向，並將車輛掛入一檔。","將車輪轉向路邊。","保持車輪筆直。","方向無關緊要。"],respuestaCorrecta:0,explicacion:"如果手剎失靈，車輪會撞到路邊，阻止車輛滑向交通。",pista:"上坡，向外。下坡，向內。"},
+      {pregunta:"您何時必須向警方報告交通事故？",opciones:["如果有人受傷，或對其他車輛或財物造成損壞且物主不在場。","只有當損壞超過一定金額時。","無論損壞如何，都必須報告。","只有在是您的過失時。"],respuestaCorrecta:0,explicacion:"任何意外後您都必須停車，並在24小時內向警方報告，如果有人受傷。",pista:"法律要求在有人受傷或無法聯繫物主時報告。"},
+      {pregunta:"一個藍底白字'P'的標誌是什麼意思？",opciones:["准許泊車。","巴士站。","只限警察。","行人專用區。"],respuestaCorrecta:0,explicacion:"這是一個指示泊車區域的資訊性標誌。",pista:"「P」是「Parking」的通用符號。"},
+      {pregunta:"在進行U形轉彎前，最重要的檢查是什麼？",opciones:["確保安全、合法，並且不會妨礙其他道路使用者。","確保有足夠的空間。","確保附近沒有警車。","確保可以快速完成。"],respuestaCorrecta:0,explicacion:"U形轉彎是危險的操作，在許多地方是禁止的。",pista:"安全、合法、方便是三大支柱。"},
+      {pregunta:"路上的「隆聲帶」有什麼用途？",opciones:["提醒注意力不集中的司機注意危險。","減慢交通速度。","測量車速。","標示道路邊緣。"],respuestaCorrecta:0,explicacion:"隆聲帶的震動和噪音旨在引起司機的注意。",pista:"它們發出「隆隆」聲來喚醒您。"},
+      {pregunta:"您看到一個帶有白色手杖和紅色帶的行人。這表示什麼？",opciones:["此人是聾盲人士。","此人是導遊。","此人是建築工人。","此人是失明人士。"],respuestaCorrecta:0,explicacion:"白色手杖表示此人失明。紅色帶表示他們同時也是失聰的。",pista:"紅色帶增加了第二種殘疾。"},
+      {pregunta:"什麼是「空波滑行」（coasting）？",opciones:["以空波或踩下離合器行駛。","一種節省燃料的駕駛模式。","不使用剎車駕駛。","一種下坡技巧。"],respuestaCorrecta:0,explicacion:"空波滑行是危險的，因為它降低了司機對車輛的控制，特別是剎車和轉向。",pista:"這意味著將引擎與車輪分離。"},
+      {pregunta:"駕駛時何時可以使用危險警告燈？",opciones:["只有在高速公路或無限制的雙程分隔車路上，用以警告後方司機前方有危險或障礙物時。","下大雨時。","如果您要短暫非法泊車。","當您迷路時。"],respuestaCorrecta:0,explicacion:"行駛時使用危險警告燈通常是不允許的，但有此特定例外。",pista:"行駛中使用此燈是一種非常具體的警告。"},
+      {pregunta:"在大雨中，您的停車距離可以是...",opciones:["至少是乾燥條件下的兩倍。","與乾燥條件下相同。","長50%。","稍長一些。"],respuestaCorrecta:0,explicacion:"濕滑的路面會顯著降低輪胎的抓地力。建議使用「四秒規則」。",pista:"水在輪胎和路面之間起潤滑作用。"},
+      {pregunta:"一個紅色圓圈內有單車的標誌是什麼意思？",opciones:["禁止踏單車。","單車路線。","單車停泊處。","危險，附近有單車。"],respuestaCorrecta:0,explicacion:"紅色圓圈表示禁止。此標誌意味著不允許單車在此路上行駛。",pista:"紅色圓圈 = 不准。"},
+      {pregunta:"如果您走錯路，發現自己在一條單程路上，您應該怎麼做？",opciones:["繼續行駛到路尾，找個安全的地方掉頭。","小心地倒車出去。","停車等待幫助。","在第一個機會轉彎，即使是違法的。"],respuestaCorrecta:0,explicacion:"您不能在單程路上倒車。應小心駛至下一個路口。",pista:"逆行是極其危險的。"},
+      {pregunta:"在霧天開始旅程前，您應該檢查什麼？",opciones:["您所有的車燈是否正常工作並清潔。","您的輪胎壓力。","您的機油水平。","您在GPS上的路線。"],respuestaCorrecta:0,explicacion:"在霧中，能見度至關重要。確保您的車頭燈、尾燈和霧燈都能正常運作。",pista:"在霧中，「看見和被看見」最重要。"},
+      {pregunta:"誰有責任確保兒童乘客佩戴安全帶？",opciones:["司機。","兒童自己。","父母，即使他們不在車上。","前座乘客。"],respuestaCorrecta:0,explicacion:"司機有法律責任確保某個年齡以下的乘客被正確地約束。",pista:"船長對船上所有人都負有責任。"},
+      {pregunta:"當接近一個已經綠了很久的交通燈時，您應該怎麼做？",opciones:["準備停車，因為它可能會變色。","加速通過，以免它變色。","保持相同速度。","看著旁邊的司機。"],respuestaCorrecta:0,explicacion:"一個「陳舊」的綠燈很可能會變成黃燈。預計到這一點，並準備好安全停車。",pista:"沒有什么是永恆的，尤其是綠燈。"},
+      {pregunta:"您正在等待從小路駛出。一輛大型車輛正從右邊轉入這條路。您為什麼應該等待？",opciones:["大型車輛可能會遮擋您對迎面而來交通的視線，尤其是電單車。","大型車輛總是有優先權。","您可能會刮花您的車。","司機可能需要更多空間。"],respuestaCorrecta:0,explicacion:"大型車輛會造成很大的盲點。等到您有清晰的道路視野後再駛出。",pista:"您看不到的東西可能會傷害您。"},
+      {pregunta:"您應該何時使用霧燈？",opciones:["只有在能見度嚴重降低時，通常降至100米以下。","一旦開始下雨。","晚上在所有道路上。","在光線不足的市區。"],respuestaCorrecta:0,explicacion:"霧燈非常亮，可能會使其他司機目眩。一旦能見度提高，就必須關掉。",pista:"只在有霧時使用霧燈。"},
+      {pregunta:"在有街燈的道路上，除非有標誌另行指示，否則預設的速度限制是多少？",opciones:["每小時50公里。","每小時70公里。","每小時30公里。","每小時80公里。"],respuestaCorrecta:0,explicacion:"在香港，有街燈的道路通常被視為已建區，預設速度限制為每小時50公里。",pista:"這是標準的城市速度限制。"},
+      {pregunta:"在「行人優先」過路處，閃爍的黃燈是什麼意思？",opciones:["讓路給過路處的行人。如果暢通，您可以前進。","停車並等待綠燈。","前進，因為行人必須等待。","交通燈故障。"],respuestaCorrecta:0,explicacion:"紅燈過後，閃爍的黃燈允許交通在沒有更多行人過馬路的情況下行駛。",pista:"閃爍的黃燈意味著讓路，而不是強制停車。"}
+    ],
+    tl:[{pregunta:"Ano ang dapat mong gawin kung makakita ka ng 'Stop' sign sa isang interseksyon?",opciones:["Bagalan ang takbo at magpatuloy kung walang trapiko.","Huminto nang tuluyan sa likod ng linya, kahit walang trapiko.","Magbigay-daan lamang sa trapiko mula sa kanan.","Businahan para babalaan ang ibang driver."],respuestaCorrecta:1,explicacion:"Ang 'Stop' sign ay nangangailangan ng buong paghinto sa likod ng linya.",pista:"Ang sign na ito ay nangangailangan ng buong paghinto."}],
+    hi:[{pregunta:"चौराहे पर 'स्टॉप' चिन्ह देखने पर आपको क्या करना चाहिए?",opciones:["गति धीमी करें और यदि कोई यातायात नहीं है तो आगे बढ़ें।","लाइन के पीछे पूरी तरह से रुकें, भले ही कोई यातायात न हो।","केवल दाईं ओर से आने वाले यातायात को रास्ता दें।","अन्य ड्राइवरों को चेतावनी देने के लिए हॉर्न बजाएं।"],respuestaCorrecta:1,explicacion:"'स्टॉप' चिन्ह के लिए आपको रुकने की आवश्यकता है।",pista:"यह चिन्ह पूर्ण विराम की मांग करता है।"}],
+    ru:[{pregunta:"Что вы должны сделать, если видите знак 'Стоп' на перекрестке?",opciones:["Замедлиться и продолжить движение, если нет машин.","Полностью остановиться перед линией, даже если нет машин.","Уступить дорогу только машинам справа.","Посигналить, чтобы предупредить других водителей."],respuestaCorrecta:1,explicacion:"Знак 'Стоп' требует полной остановки.",pista:"Этот знак требует полной остановки."}],
+    ms:[{pregunta:"Apakah yang mesti anda lakukan apabila melihat papan tanda 'Berhenti' di persimpangan?",opciones:["Perlahankan kenderaan dan teruskan jika tiada lalu lintas.","Berhenti sepenuhnya di belakang garisan, walaupun tiada lalu lintas.","Beri laluan hanya kepada lalu lintas dari arah kanan.","Bunyikan hon untuk memberi amaran kepada pemandu lain."],respuestaCorrecta:1,explicacion:"Papan tanda 'Berhenti' memerlukan pemberhentian penuh.",pista:"Papan tanda ini memerlukan pemberhentian penuh."}]
+  },
+
+  docs: {
+    es:[
+      {title:'Página 4: Cómo usar este libro',content:'Este libro contiene una amplia gama de reglas, consejos e información para todo tipo de usuarios de la vía. Se divide en capítulos para diferentes tipos de usuarios de la vía con capítulos adicionales que cubren temas especiales.'},
+      {title:'Página 8: El Código de la Circulación Vial',content:'El Código de la Circulación Vial es una guía para todos los peatones. Hay seis pasos básicos: Paso 1 – Primero encuentre un lugar seguro para cruzar, luego deténgase. Paso 2 – Párese en la acera cerca del bordillo. Paso 3 – Mire a su alrededor en busca de tráfico y escuche.'},
+      {title:'Página 24: Personas con Discapacidades',content:'Las sillas de ruedas y las muletas son las ayudas para caminar más comunes para las personas con movilidad reducida. Se proporcionan muchas facilidades en las carreteras, como aceras y lugares para cruzar, para personas con movilidad reducida.'},
+      {title:'Página 41: Conducción',content:'Debe tener al menos 18 años y tener una licencia de conducir válida. La conducción bajo los efectos del alcohol es un delito penal. El límite prescrito se establece en 22 microgramos de alcohol por 100 mililitros de aliento.'}
+    ],
+    en:[
+      {title:'Page 4: How to use this Book',content:'This book contains a wide range of rules, advice and information for all types of road users. It is divided into chapters for different types of road users with additional chapters covering special topics.'},
+      {title:'Page 8: The Road Crossing Code',content:'The Road Crossing Code is a guide for all pedestrians. There are six basic steps: Step 1 – First find a safe place to cross, then stop. Step 2 – Stand on the pavement near the kerb. Step 3 – Look all around for traffic and listen.'},
+      {title:'Page 24: Persons with Disabilities',content:'Wheelchairs and crutches are the most common walking aids for mobility impaired persons. Many facilities are provided on roads, such as pavements and road crossing places, for mobility impaired persons.'},
+      {title:'Page 41: Driving',content:'You must be aged at least 18 and hold a valid driving licence. Drink driving is a criminal offence. The prescribed limit is set at 22 micrograms of alcohol per 100 millilitres of breath.'}
+    ],
+    zh:[
+      {title:'第4頁：如何使用本書',content:'本書為各類道路使用者提供廣泛的規則、忠告和資料。本書分為不同章節，對象為不同類別的道路使用者，另有附加章節闡述特別論題。'},
+      {title:'第8頁：過馬路守則',content:'「過馬路守則」是所有行人的指南，指導行人橫過各種馬路。過馬路有六個基本步驟：第一步－先找安全的過路點，然後停步。第二步－站在路邊。第三步－看清楚交通情況和聆聽交通聲音。'},
+      {title:'第24頁：殘疾人士',content:'輪椅和枴杖，是行動不便人士最常用的助行工具。道路上設有多種方便行動不便人士的設施，例如行人路和過路處。'},
+      {title:'第41頁：駕駛',content:'你必須年滿18歲，並持有有效駕駛執照。酒後駕駛是刑事罪行。法定限度為每100毫升呼氣含有22微克酒精。'}
+    ],
+    tl:[{title:'Pahina 4',content:'Ang aklat na ito ay naglalaman ng malawak na hanay ng mga panuntunan para sa lahat ng uri ng mga gumagamit ng kalsada.'},{title:'Pahina 8',content:'Ang Road Crossing Code ay isang gabay para sa lahat ng mga naglalakad.'}],
+    hi:[{title:'पृष्ठ 4',content:'इस पुस्तक में सभी प्रकार के सड़क उपयोगकर्ताओं के लिए नियमों की एक विस्तृत श्रृंखला है।'},{title:'पृष्ठ 8',content:'रोड क्रॉसिंग कोड सभी पैदल यात्रियों के लिए एक मार्गदर्शिका है।'}],
+    ru:[{title:'Стр. 4',content:'Эта книга содержит широкий спектр правил для всех типов участников дорожного движения.'},{title:'Стр. 8',content:'Кодекс перехода дорог является руководством для всех пешеходов.'}],
+    ms:[{title:'Halaman 4',content:'Buku ini mengandungi pelbagai peraturan untuk semua jenis pengguna jalan raya.'},{title:'Halaman 8',content:'Kod Melintas Jalan adalah panduan untuk semua pejalan kaki.'}]
+  },
+
+  /* ── MULTIMEDIA — Original podcast and PDFs INTACT ── */
+  multimedia: [
+    {
+      title:"Guía de Supervivencia - Hong Kong",
+      type:"pdf",
+      url:"https://drive.google.com/file/d/1yGRZrtIUR_zyPjucUbhhPjDjDckjEHVi/preview",
+      description:"Guía esencial para conductores en Hong Kong.",
+      cover:""
+    },
+    {
+      title:"Manual de Señales de Tránsito",
+      type:"pdf",
+      url:"https://drive.google.com/file/d/1viki95RIBn4cmmaa81QWNM8-yQ6vBl_4/preview",
+      description:"Compendio detallado de todas las señales de tránsito de HK."
+    },
+    {
+      title:"Reglas de Oro del Conductor",
+      type:"pdf",
+      url:"https://drive.google.com/file/d/1S-VLj4hN5j9qWgCkArRuLHq1tZ-sGNZM/preview",
+      description:"Principios fundamentales para una conducción segura."
+    },
+    {
+      title:"Guía Rápida de Examen",
+      type:"pdf",
+      url:"https://drive.google.com/file/d/1-kNO2kfIMFM-_y5n9SayGsliCtxF7CxJ/preview",
+      description:"Resumen de los puntos más importantes para el examen teórico."
+    }
+  ],
+
+  examenVial: [
+    {question:"¿Cuál es el estatus legal del Código de los Usuarios de la Carretera?",options:["Es una ley estricta y su violación es un delito directo.","No es una ley en sí misma, pero el incumplimiento puede usarse como evidencia en procedimientos judiciales.","Es solo una guía sugerida sin peso legal.","Solo aplica a conductores profesionales."],correctAnswer:1,hint:"Consulta la sección de introducción del Código.",explanation:"Aunque el Código no es ley, los tribunales pueden considerar su incumplimiento al determinar la responsabilidad."},
+    {question:"¿Qué significa una línea amarilla doble continua en el borde de la calzada?",options:["Prohibido estacionar, pero se permite cargar/descargar.","Prohibido parar en cualquier momento.","Prohibido adelantar.","Zona de estacionamiento limitado."],correctAnswer:1,hint:"Es la restricción más estricta de detención.",explanation:"Las líneas amarillas dobles indican una prohibición total de detenerse las 24 horas del día."},
+    {question:"¿Cuál es el límite de velocidad máximo para un autobús escolar en una autopista?",options:["70 km/h","80 km/h","100 km/h","110 km/h"],correctAnswer:0,hint:"Los vehículos pesados y autobuses tienen límites específicos.",explanation:"Los autobuses tienen un límite de 70 km/h en autopistas de HK."},
+    {question:"¿Qué debe hacer si ve una señal de 'Pare' en una intersección?",options:["Ceder el paso si viene alguien.","Reducir la velocidad y pasar con cuidado.","Detenerse por completo antes de la línea de parada.","Tocar la bocina y pasar."],correctAnswer:2,hint:"La palabra 'Pare' es literal.",explanation:"Es obligatorio detenerse por completo, independientemente de si hay tráfico o no."},
+    {question:"¿Cuál es la distancia mínima de seguridad con el vehículo de adelante en condiciones normales?",options:["La longitud de un coche.","Regla de los 2 segundos.","Regla de los 5 segundos.","10 metros exactos."],correctAnswer:1,hint:"Es una medida de tiempo, no de distancia fija.",explanation:"La regla de los 2 segundos permite reaccionar a tiempo ante frenazos bruscos."},
+    {question:"¿Qué significa un semáforo en ámbar fijo?",options:["Acelere para pasar antes de que cambie a rojo.","Deténgase a menos que esté tan cerca de la línea que sea peligroso frenar bruscamente.","Puede pasar si no hay peatones.","El semáforo está averiado."],correctAnswer:1,hint:"Es una señal de advertencia para detenerse.",explanation:"El ámbar indica que el rojo es inminente y debe prepararse para parar."},
+    {question:"¿Quién tiene prioridad en una rotonda?",options:["Los vehículos que entran a la rotonda.","Los vehículos que ya están dentro de la rotonda circulando por la derecha.","El vehículo más grande.","Nadie, es por orden de llegada."],correctAnswer:1,hint:"En HK se conduce por la izquierda.",explanation:"Debe ceder el paso al tráfico que viene por su derecha dentro de la rotonda."},
+    {question:"¿Qué indica una señal circular con borde rojo y un coche y una moto dentro?",options:["Zona permitida para coches y motos.","Prohibida la entrada a vehículos de motor.","Peligro: tráfico denso.","Solo vehículos de emergencia."],correctAnswer:1,hint:"El borde rojo suele significar prohibición.",explanation:"Esta señal prohíbe el acceso a todos los vehículos de motor."},
+    {question:"¿Cuál es el nivel máximo permitido de alcohol en sangre para conductores en Hong Kong?",options:["20mg por 100ml","50mg por 100ml","80mg por 100ml","0mg (Tolerancia cero)"],correctAnswer:1,hint:"Es un límite intermedio común en muchas ciudades.",explanation:"El límite es de 50mg de alcohol por cada 100ml de sangre."},
+    {question:"¿Qué debe hacer si su vehículo se avería en una autopista?",options:["Quedarse dentro del coche y esperar ayuda.","Intentar arreglarlo en el carril donde se detuvo.","Mover el vehículo al arcén si es posible y salir por la puerta izquierda.","Caminar por la autopista para buscar una gasolinera."],correctAnswer:2,hint:"La seguridad es lo primero, aléjese del tráfico.",explanation:"Debe salir del vehículo por el lado opuesto al tráfico."},
+    {question:"¿Qué significa una línea blanca discontinua en el centro de la carretera?",options:["Prohibido adelantar.","Carril exclusivo para autobuses.","Separación de carriles, se permite adelantar con precaución.","Zona de obras."],correctAnswer:2,hint:"Es la señalización más común en carreteras de doble sentido.",explanation:"Indica que puede cruzarla para adelantar o girar si es seguro."},
+    {question:"¿Cuándo puede usar la bocina en una zona urbana?",options:["Para saludar a amigos.","Para expresar frustración con otros conductores.","Solo para advertir a otros de un peligro inminente.","En cualquier momento entre las 7 am y las 11 pm."],correctAnswer:2,hint:"La bocina es un elemento de seguridad, no de comunicación social.",explanation:"El uso innecesario de la bocina está prohibido."},
+    {question:"¿Qué indica un triángulo con borde rojo apuntando hacia abajo?",options:["Peligro indeterminado.","Ceda el paso.","Dirección prohibida.","Fin de autopista."],correctAnswer:1,hint:"Es una de las señales más importantes en intersecciones.",explanation:"Indica que debe ceder el paso al tráfico de la vía principal."},
+    {question:"¿Cuál es la función principal de los reflectores rojos en la carretera?",options:["Marcar el borde izquierdo de la calzada.","Marcar el carril derecho.","Indicar una zona de peligro.","Separar carriles en el mismo sentido."],correctAnswer:0,hint:"Los colores de los reflectores tienen significados específicos.",explanation:"Los reflectores rojos marcan el borde izquierdo de la calzada."},
+    {question:"¿Qué debe hacer si un peatón ya ha empezado a cruzar en un paso de cebra?",options:["Tocar la bocina para que se dé prisa.","Esquivarlo sin frenar.","Detenerse y permitir que el peatón termine de cruzar.","Acelerar para pasar antes que él."],correctAnswer:2,hint:"Los peatones tienen prioridad en los pasos de cebra.",explanation:"Debe ceder el paso a cualquier peatón que esté en el paso de cebra."},
+    {question:"¿Qué significa una señal azul rectangular con una 'P' blanca?",options:["Parada de autobús.","Zona de estacionamiento (Parking).","Puesto de policía.","Paso elevado para peatones."],correctAnswer:1,hint:"Es una señal informativa internacional.",explanation:"Indica un lugar donde está permitido estacionar vehículos."},
+    {question:"¿Cuándo es obligatorio usar el cinturón de seguridad?",options:["Solo en autopistas.","Solo el conductor.","Siempre, tanto el conductor como todos los pasajeros.","Solo en viajes largos."],correctAnswer:2,hint:"Es la medida de seguridad pasiva más efectiva.",explanation:"El uso del cinturón es obligatorio para todos los ocupantes."},
+    {question:"¿Qué debe hacer si se pasa la salida en una autopista?",options:["Dar marcha atrás por el arcén.","Hacer un cambio de sentido en la mediana.","Continuar hasta la siguiente salida.","Detenerse y esperar a que no venga nadie para girar."],correctAnswer:2,hint:"Nunca retroceda en una vía de alta velocidad.",explanation:"Por seguridad, debe seguir hasta la próxima salida permitida."},
+    {question:"¿Qué significa una luz roja intermitente en un paso a nivel?",options:["Pase con precaución.","Deténgase inmediatamente, el tren se acerca.","El tren acaba de pasar.","Fallo en el sistema de señales."],correctAnswer:1,hint:"Es una señal de parada obligatoria y urgente.",explanation:"Indica la prohibición absoluta de cruzar por la proximidad del tren."},
+    {question:"¿Cuál es el propósito de las líneas de zigzag blancas cerca de un paso de cebra?",options:["Zona de carga y descarga.","Prohibido estacionar y adelantar en esa zona.","Indicar que la carretera es sinuosa.","Decoración vial."],correctAnswer:1,hint:"Mejoran la visibilidad del paso de peatones.",explanation:"Estas líneas prohíben detenerse o adelantar para asegurar que los peatones sean visibles."},
+    {question:"¿Qué indica una señal circular azul con una flecha blanca apuntando a la izquierda?",options:["Giro a la izquierda prohibido.","Dirección obligatoria a la izquierda.","Cuidado con vehículos que vienen por la izquierda.","Parking a la izquierda."],correctAnswer:1,hint:"Las señales azules circulares suelen ser de obligación.",explanation:"Indica que el único sentido de circulación permitido es hacia la izquierda."},
+    {question:"¿Qué debe hacer si hay niebla densa mientras conduce?",options:["Encender las luces de emergencia y seguir a velocidad normal.","Encender las luces antiniebla y reducir la velocidad significativamente.","Apagar todas las luces para evitar reflejos.","Pegarse al coche de adelante para no perderse."],correctAnswer:1,hint:"Aumente su visibilidad y reduzca el riesgo.",explanation:"Las luces antiniebla ayudan a ser visto y ver mejor."},
+    {question:"¿Qué significa una señal de 'Ceda el paso' (Give Way)?",options:["Detenerse siempre.","Acelerar para entrar rápido al flujo de tráfico.","Ceder el paso al tráfico de la vía principal, deteniéndose si es necesario.","Tener prioridad sobre los demás."],correctAnswer:2,hint:"Es menos restrictiva que un 'Stop' pero requiere precaución.",explanation:"Debe permitir el paso a los vehículos que ya circulan por la vía."},
+    {question:"¿Cuál es la sanción por usar el teléfono móvil sin manos libres mientras se conduce?",options:["Una advertencia verbal.","Multa económica y puntos de penalización.","Retirada inmediata del carnet.","No está sancionado en Hong Kong."],correctAnswer:1,hint:"Es una distracción grave al volante.",explanation:"El uso manual del móvil conlleva multas y puntos."},
+    {question:"¿Qué indica una señal circular con borde rojo y el número '50' dentro?",options:["Velocidad mínima de 50 km/h.","Velocidad máxima permitida de 50 km/h.","Distancia de 50 metros a la siguiente señal.","Número de la carretera."],correctAnswer:1,hint:"El borde rojo en señales circulares indica prohibición o límite.",explanation:"Es la velocidad máxima legal a la que se puede circular en ese tramo."},
+    {question:"¿Qué debe hacer al acercarse a un autobús escolar que se ha detenido para dejar niños?",options:["Pasar rápido para no molestar.","Tocar la bocina para avisar.","Reducir la velocidad y estar preparado para detenerse si algún niño cruza.","Adelantar por la derecha sin mirar."],correctAnswer:2,hint:"Los niños son peatones impredecibles.",explanation:"Debe extremar la precaución ya que los niños pueden cruzar de forma inesperada."},
+    {question:"¿Qué significa una flecha verde iluminada apuntando a la izquierda junto a un semáforo en rojo?",options:["Debe esperar a que el semáforo principal se ponga verde.","Puede girar a la izquierda con precaución, cediendo el paso.","El semáforo está roto.","Solo para vehículos de emergencia."],correctAnswer:1,hint:"Se llama 'filtro' de giro.",explanation:"La flecha verde permite el giro en esa dirección específica aunque el semáforo principal esté en rojo."},
+    {question:"¿Cuál es el significado de una línea blanca continua en el borde de la calzada?",options:["Prohibido adelantar.","Marca el borde de la carretera.","Indica un carril para bicicletas.","Zona de parada de taxis."],correctAnswer:1,hint:"Ayuda a definir el límite de la vía, especialmente de noche.",explanation:"Delimita el borde exterior de la calzada donde empieza el arcén o la acera."},
+    {question:"¿Qué deben hacer los conductores ante un semáforo en amarillo?",options:["Acelerar para no quedarse atrapado.","Frenar gradualmente si es seguro hacerlo.","Mantener la velocidad actual.","Encender los intermitentes."],correctAnswer:1,hint:"El amarillo siempre es señal de precaución.",explanation:"Debe reducir la velocidad y prepararse para detenerse, a menos que esté demasiado cerca de la línea de parada."},
+    {question:"¿Qué distancia debe mantener al seguir a un camión grande?",options:["La misma que con cualquier otro vehículo.","Mayor distancia que con un coche, ya que su campo de visión está limitado.","Puede seguirlo muy de cerca para aprovecharse de su estela.","Solo 5 metros."],correctAnswer:1,hint:"Los vehículos grandes tienen puntos ciegos mayores.",explanation:"Debe mantener mayor distancia con vehículos grandes para tener mejor visión y tiempo de reacción."}
+  ]
+};
+
+/* ════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════ */
+let state = {
+  screen:'home',lang:'es',theme:'dark',menuOpen:false,
+  quiz:{qi:0,score:0,answers:[],selected:false},
+  examen:{qi:0,score:0,answers:[],selected:false,hint:false},
+  pomo:{timer:null,running:false,left:25*60,work:true,workMin:25,breakMin:5,history:[]},
+  cal:{date:new Date(),studyDays:[],events:[]},
+  docs:{page:0,annotations:{}},
+  ann:{tool:'brush',color:'#fa5252',size:5,drawing:false,lx:0,ly:0},
+  notes:[],folders:[],links:[],rss:{enabled:true,items:[]},
+  logs:[],settings:{sound:true,autoSave:true,fontSize:'medium',aiProvider:'gemini',geminiKey:'',groqKey:''}
+};
+
+/* ════════════════════════════════════════════════════
+   HELPERS
+   ════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const app = $('app');
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2) }
+
+const LS = {
+  get(k){ try{return JSON.parse(localStorage.getItem(k))}catch{return null} },
+  set(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch{} }
+};
+
+function addLog(msg,type='info'){
+  state.logs.unshift({ts:Date.now(),msg,type});
+  if(state.logs.length>100) state.logs.pop();
+}
+
+function fmt(s){ return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}` }
+
+/* ════════════════════════════════════════════════════
+   POMODORO
+   ════════════════════════════════════════════════════ */
+function tickPomo(){
+  state.pomo.left--;
+  if(state.pomo.left<0){
+    state.pomo.history.push({type:state.pomo.work?'work':'break',dur:state.pomo.work?state.pomo.workMin:state.pomo.breakMin,ts:Date.now()});
+    state.pomo.work=!state.pomo.work;
+    state.pomo.left=(state.pomo.work?state.pomo.workMin:state.pomo.breakMin)*60;
+    addLog('Pomodoro session ended','success');
+    soundPomoEnd();
+  }
+  renderPomoNav();
+  const td=document.querySelector('.timer-display');
+  if(td) td.textContent=fmt(state.pomo.left);
+}
+
+function togglePomo(){
+  state.pomo.running=!state.pomo.running;
+  if(state.pomo.running&&!state.pomo.timer) state.pomo.timer=setInterval(tickPomo,1000);
+  else if(!state.pomo.running&&state.pomo.timer){ clearInterval(state.pomo.timer); state.pomo.timer=null; }
+  render();
+}
+
+function resetPomo(){
+  if(state.pomo.timer){ clearInterval(state.pomo.timer); state.pomo.timer=null; }
+  state.pomo.running=false; state.pomo.left=state.pomo.workMin*60; state.pomo.work=true;
+  render();
+}
+
+function renderPomoNav(){
+  const nav=$('pomodoro-nav');
+  if(!nav) return;
+  const icon=state.pomo.running
+    ?'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 01.75.75v12a.75.75 0 01-1.5 0v-12a.75.75 0 01.75-.75zm9 0a.75.75 0 01.75.75v12a.75.75 0 01-1.5 0v-12a.75.75 0 01.75-.75z" clip-rule="evenodd"/></svg>'
+    :'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.647c1.295.748 1.295 2.535 0 3.284L7.279 20.99c-1.25.72-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd"/></svg>';
+  nav.innerHTML=`<span>${fmt(state.pomo.left)}</span><button id="pomodoro-nav-toggle">${icon}</button>`;
+  $('pomodoro-nav-toggle').onclick=togglePomo;
+}
+
+/* ════════════════════════════════════════════════════
+   THEME
+   ════════════════════════════════════════════════════ */
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',state.theme);
+}
+function cycleTheme(){
+  const t=['light','dark','cyberpunk','matrix','retro'];
+  state.theme=t[(t.indexOf(state.theme)+1)%t.length];
+  LS.set('theme',state.theme); applyTheme(); render();
+}
+
+/* ════════════════════════════════════════════════════
+   SCREENS
+   ════════════════════════════════════════════════════ */
+function renderHome(){
+  const ui=appData.ui[state.lang];
+  const qd=appData.quiz[state.lang];
+  return `
+  <div class="language-selector">
+    <label>${ui.selectLanguage}:</label>
+    <select id="lang-sel">${['es','en','zh','tl','hi','ru','ms'].map(l=>`<option value="${l}" ${state.lang===l?'selected':''}>${{es:'Español',en:'English',zh:'中文',tl:'Filipino',hi:'हिन्दी',ru:'Русский',ms:'Melayu'}[l]}</option>`).join('')}</select>
+  </div>
+  <h1 style="font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:.5rem">${ui.title}</h1>
+  <p style="opacity:.7;margin-bottom:1.5rem">${ui.description(qd.length)}</p>
+  <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap">
+    <button class="btn-primary" id="start-quiz-btn" style="flex:1;min-width:140px">${ui.startBtn}</button>
+    ${state.quiz.qi>0&&state.quiz.qi<qd.length?`<button class="btn" id="resume-quiz-btn" style="flex:1;min-width:140px">${ui.resumeBtn}</button>`:''}
+  </div>
+  <div class="card pomodoro-timer">
+    <div class="pomodoro-session-label">${state.pomo.work?'🍅 Focus':'☕ Break'}</div>
+    <div class="timer-display">${fmt(state.pomo.left)}</div>
+    <div class="pomodoro-controls">
+      <button class="btn-primary" id="pomo-toggle" style="width:auto;padding:.6rem 1.5rem">${state.pomo.running?ui.pomodoroPause:ui.pomodoroStart}</button>
+      <button class="btn" id="pomo-reset">${ui.pomodoroReset}</button>
+    </div>
+  </div>
+  <div class="dashboard-grid" id="dash-grid"></div>`;
+}
+
+function renderQuiz(){
+  const ui=appData.ui[state.lang];
+  const qd=appData.quiz[state.lang];
+  if(state.quiz.qi>=qd.length) return renderResults();
+  const q=qd[state.quiz.qi];
+  const opts=q.opciones.map((o,i)=>{
+    let cls='option-btn';
+    if(state.quiz.selected){
+      if(i===q.respuestaCorrecta) cls+=' correct';
+      else if(state.quiz.answers[state.quiz.qi]===i) cls+=' incorrect';
+    }
+    return `<button class="${cls}" data-i="${i}" ${state.quiz.selected?'disabled':''}><span class="option-prefix">${String.fromCharCode(65+i)}</span>${o}</button>`;
+  }).join('');
+  return `
+  <div class="quiz-header"><h2 style="font-family:'Orbitron',sans-serif;color:var(--primary-color)">${ui.questionTitle(state.quiz.qi+1,qd.length)}</h2></div>
+  <div class="card question-container"><p style="font-size:1rem">${q.pregunta}</p></div>
+  <div class="options-container">${opts}</div>
+  <div id="expl" class="card" style="display:none;border-left:4px solid var(--primary-color)"></div>
+  <div class="quiz-footer">
+    <button class="btn" id="hint-btn" ${state.quiz.selected?'disabled':''}>${ui.hintBtn}</button>
+    <button class="btn" id="reveal-btn" ${state.quiz.selected?'disabled':''}>${ui.revealBtn}</button>
+    <button class="btn-primary" id="next-btn" style="display:${state.quiz.selected?'inline-block':'none'};flex:2">${ui.nextBtn}</button>
+  </div>`;
+}
+
+function renderResults(){
+  const ui=appData.ui[state.lang];
+  const qd=appData.quiz[state.lang];
+  const pct=Math.round((state.quiz.score/qd.length)*100);
+  const msg=pct>=80?ui.messageGreat:pct>=50?ui.messageGood:ui.messagePoor;
+  const review=qd.map((q,i)=>{
+    const ua=state.quiz.answers[i];
+    const ok=ua===q.respuestaCorrecta;
+    return `<div class="review-question card ${ok?'correct-review':'incorrect-review'}">
+      <p><strong>${i+1}. ${q.pregunta}</strong></p>
+      <p>Tu respuesta: ${ua!=null?q.opciones[ua]:'No respondida'}</p>
+      ${!ok?`<p>Correcta: ${q.opciones[q.respuestaCorrecta]}</p><p class="explanation">${q.explicacion}</p>`:''}
+    </div>`;
+  }).join('');
+  return `<h1 style="font-family:'Orbitron',sans-serif;color:var(--primary-color)">${ui.resultsTitle}</h1>
+  <div class="card score-container">
+    <h2>${ui.scoreText}: ${state.quiz.score}/${qd.length} (${pct}%)</h2>
+    <p class="final-message">${msg}</p>
+  </div>
+  <button class="btn-primary" id="restart-btn" style="max-width:300px;margin:0 auto 2rem;display:block">${ui.restartBtn}</button>
+  <div>${review}</div>`;
+}
+
+function renderCalendar(){
+  const ui=appData.ui[state.lang];
+  const d=state.cal.date;
+  const y=d.getFullYear(),m=d.getMonth();
+  const mn=d.toLocaleString(state.lang,{month:'long',year:'numeric'});
+  const fd=new Date(y,m,1).getDay();
+  const dim=new Date(y,m+1,0).getDate();
+  let days='<div class="day-name">Dom</div><div class="day-name">Lun</div><div class="day-name">Mar</div><div class="day-name">Mié</div><div class="day-name">Jue</div><div class="day-name">Vie</div><div class="day-name">Sáb</div>';
+  for(let i=0;i<fd;i++) days+='<div></div>';
+  for(let d2=1;d2<=dim;d2++){
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d2).padStart(2,'0')}`;
+    const isT=new Date().toDateString()===new Date(y,m,d2).toDateString();
+    const isSt=state.cal.studyDays.includes(ds);
+    const hasEv=state.cal.events.some(e=>e.date===ds);
+    days+=`<div class="day ${isSt?'study-day':''} ${isT?'today':''} ${hasEv?'has-events':''}" data-date="${ds}">${d2}</div>`;
+  }
+  const mevs=state.cal.events.filter(e=>e.date.startsWith(`${y}-${String(m+1).padStart(2,'0')}`));
+  return `<h2 style="font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:1rem">${ui.calendarTitle}</h2>
+  <div class="card">
+    <div class="calendar-header">
+      <button class="btn" id="prev-mo">&lt;</button>
+      <h3>${mn}</h3>
+      <button class="btn" id="next-mo">&gt;</button>
+    </div>
+    <div class="calendar-grid">${days}</div>
+    ${mevs.length?`<div class="calendar-events-list">${mevs.sort((a,b)=>a.time.localeCompare(b.time)).map(e=>`
+      <div class="event-item">
+        <div class="event-info"><h4>${e.title}</h4><span>📅 ${e.date} | ⏰ ${e.time}</span></div>
+        <button class="btn-sm delete-ev" data-id="${e.id}">×</button>
+      </div>`).join('')}</div>`:''}</div>`;
+}
+
+function renderDocs(){
+  const ui=appData.ui[state.lang];
+  const dd=(appData.docs[state.lang]||appData.docs.es);
+  const cp=dd[state.docs.page];
+  const colors=['#fa5252','#4dabf7','#fab005','#40c057','var(--text-color)'];
+  const sizes=[2,5,10];
+  return `<h1 style="font-family:'Orbitron',sans-serif;color:var(--primary-color);margin-bottom:1rem">${ui.docsTitle}</h1>
+  <div class="add-content-url card">
+    <input type="text" id="doc-url-in" placeholder="URL Google Drive / PDF" style="flex:2">
+    <input type="text" id="doc-ti-in" placeholder="Título">
+    <button class="btn-sm" id="add-doc-btn">+ Añadir</button>
+  </div>
+  <div class="annotation-toolbar">
+    <button class="tool-btn ${state.ann.tool==='brush'?'active':''}" data-tool="brush">✏️ ${ui.toolBrush}</button>
+    <button class="tool-btn ${state.ann.tool==='eraser'?'active':''}" data-tool="eraser">🧼 ${ui.toolEraser}</button>
+    ${colors.map(c=>`<button class="color-swatch ${state.ann.color===c?'active':''}" style="background:${c}" data-color="${c}"></button>`).join('')}
+    ${sizes.map(s=>`<button class="size-btn ${state.ann.size===s?'active':''}" data-sz="${s}">${s}px</button>`).join('')}
+    <button class="tool-btn" id="clear-canvas">🗑️ ${ui.toolClear}</button>
+  </div>
+  <div id="page-content-wrapper">
+    <div class="card doc-page"><h2>${cp.title}</h2><p>${cp.content.replace(/\n/g,'<br>')}</p></div>
+    <canvas id="annotation-canvas"></canvas>
+  </div>
+  <div class="page-navigation">
+    <button class="btn" id="prev-pg" ${state.docs.page===0?'disabled':''}>${ui.prevPage}</button>
+    <span class="page-info">${ui.page} ${state.docs.page+1} / ${dd.length}</span>
+    <button class="btn" id="next-pg" ${state.docs.page===dd.length-1?'disabled':''}>${ui.nextPage}</button>
+  </div>
+  <div class="external-doc-link">
+    <a href="https://drive.google.com/file/d/1PKbQ4-UnqAvPf17K8Kfwt8W4QHujmPR3/view?usp=drivesdk" target="_blank" class="btn-primary">${ui.viewPdfBtn}</a>
+  </div>`;
+}
+
+function renderMultimedia(){
+  const ui=appData.ui[state.lang];
+  const items=appData.multimedia;
+  const fab=$('add-fab');
+  if(fab) fab.style.display='flex';
+  const cards=items.map(item=>{
+    let content='';
+    if(item.type==='pdf'){
+      content=`${item.cover?`<img src="${item.cover}" class="media-cover" alt="">`:''}<iframe src="${item.url}" width="100%" height="480px" allow="autoplay"></iframe>`;
+    } else if(item.type==='video'){
+      content=`<video controls width="100%"><source src="${item.url}" type="video/mp4">No soportado.</video>`;
+    } else if(item.type==='podcast'||item.type==='audio'){
+      content=`<div class="audio-player-container">
+        <div class="audio-visualizer">${'<div class="wave-bar"></div>'.repeat(5)}</div>
+        <audio controls class="w-full"><source src="${item.url}" type="audio/mpeg">No soportado.</audio>
+      </div>`;
+    } else if(item.type==='embed'){
+      content=`<iframe src="${item.url}" width="100%" height="400px" allowfullscreen></iframe>`;
+    } else if(item.type==='image'){
+      content=`<img src="${item.url}" style="width:100%;border-radius:6px;max-height:400px;object-fit:cover" alt="${item.title}">`;
+    }
+    return `<div class="media-item">
+      <h3>${item.type==='podcast'?'🎙️ ':''}${item.title}</h3>
+      <p class="media-description">${item.description||''}</p>
+      <div class="media-content">${content}</div>
+    </div>`;
+  }).join('');
+  return `<h1>${ui.menuMultimedia}</h1>
+  <p style="opacity:.6;margin-bottom:1rem;font-size:.85rem">Pulsa ➕ para añadir nuevos archivos (podcast, vídeo, PDF...)</p>
+  <div class="multimedia-list">${cards}</div>`;
+}
+
+function renderExamen(){
+  const exam=appData.examenVial;
+  const {qi,score,answers,selected,hint}=state.examen;
+  if(qi>=exam.length){
+    const pct=Math.round(score/exam.length*100);
+    return `<div class="card" style="text-align:center;padding:2rem">
+      <h1 style="font-family:'Orbitron',sans-serif;color:var(--primary-color)">Examen Finalizado</h1>
+      <div class="score-circle"><span class="score-num">${score}/${exam.length}</span><span class="score-percent">${pct}%</span></div>
+      <p style="font-size:1rem;margin-top:.5rem">${pct>=80?'¡Excelente! Listo para el asfalto.':'Repasa un poco más.'}</p>
+      <button class="btn-primary" id="restart-exam-btn" style="max-width:200px;margin:.5rem auto 0">Reiniciar</button>
+    </div>`;
+  }
+  const q=exam[qi];
+  const opts=q.options.map((o,i)=>{
+    let cls='option-btn';
+    if(selected){ if(i===q.correctAnswer) cls+=' correct'; else if(answers[qi]===i) cls+=' incorrect'; }
+    return `<button class="${cls}" data-i="${i}" ${selected?'disabled':''}><span class="option-prefix">${String.fromCharCode(65+i)}</span>${o}</button>`;
+  }).join('');
+  return `<div class="exam-header">
+    <div class="progress-bar-container"><div class="progress-bar" style="width:${qi/exam.length*100}%"></div></div>
+    <div class="exam-stats"><span>Pregunta ${qi+1} de ${exam.length}</span><span>Puntuación: ${score}</span></div>
+  </div>
+  <div class="card question-card"><h2>${q.question}</h2>
+    <div class="options-container">${opts}</div>
+    ${selected?`<div class="explanation-box"><p><strong>Explicación:</strong> ${q.explanation}</p></div>`:''}
+    ${!selected?`<div class="exam-actions"><button class="btn-sm" id="show-hint-btn">💡 Pista</button></div>${hint?`<p class="hint-text">${q.hint}</p>`:''}`:''}</div>
+  ${selected?`<button class="btn-primary" id="next-exam-btn" style="max-width:200px;margin:.5rem auto 0;display:block">Siguiente ›</button>`:''}`;
+}
+
+function renderSettings(){
+  const ui=appData.ui[state.lang];
+  const langs=[['es','🇪🇸'],['en','🇺🇸'],['zh','🇭🇰'],['tl','🇵🇭'],['hi','🇮🇳'],['ru','🇷🇺'],['ms','🇲🇾']];
+  const themes=['light','dark','cyberpunk','matrix','retro'];
+  return `<h1 class="settings-screen" style="font-family:'Orbitron',sans-serif;color:var(--primary-color)">⚙️ ${ui.menuSettings}</h1>
+  <div class="card settings-group">
+    <h3>🌍 ${ui.settingsLanguage}</h3>
+    <div class="flags-container">${langs.map(([c,f])=>`<button class="flag-btn ${state.lang===c?'active':''}" data-lang="${c}">${f}</button>`).join('')}</div>
+  </div>
+  <div class="card settings-group">
+    <h3>🎨 ${ui.settingsTheme}</h3>
+    <div class="theme-options">${themes.map(t=>`<button class="btn-sm theme-select-btn ${state.theme===t?'active':''}" data-theme="${t}">${t}</button>`).join('')}</div>
+  </div>
+  <div class="card settings-group">
+    <h3>⏱️ Pomodoro</h3>
+    <div class="settings-row"><span>${ui.pomodoroWork}</span><input type="number" id="pomo-work-in" value="${state.pomo.workMin}" min="1" max="90" style="width:70px"></div>
+    <div class="settings-row"><span>${ui.pomodoroBreak}</span><input type="number" id="pomo-break-in" value="${state.pomo.breakMin}" min="1" max="30" style="width:70px"></div>
+    <div class="mt-20"><h4>📜 ${ui.pomodoroHistory}</h4>
+      <div class="history-list">${state.pomo.history.length?state.pomo.history.slice(-5).reverse().map(h=>`<div class="history-item"><span>${h.type==='work'?'💼':'☕'} ${h.dur}m</span><span class="opacity-70">${new Date(h.ts).toLocaleTimeString()}</span></div>`).join(''):`<p class="opacity-50">${ui.noHistory}</p>`}</div>
+    </div>
+  </div>
+  <div class="card settings-group">
+    <h3>💾 Datos</h3>
+    <div class="flex gap-10" style="flex-wrap:wrap">
+      <button class="btn" id="exp-btn">Exportar JSON</button>
+      <button class="btn" id="imp-btn">Importar JSON</button>
+      <button class="btn-danger" id="reset-btn">Reset completo</button>
+    </div>
+  </div>
+  <div class="card settings-group">
+    <h3>📜 ${ui.settingsLogs}</h3>
+    <button class="btn-sm" id="clear-logs-btn" style="margin-bottom:.5rem">Limpiar</button>
+    <div class="logs-container">${state.logs.map(l=>`<div class="log-entry ${l.type}">[${new Date(l.ts).toLocaleTimeString()}] ${l.msg}</div>`).join('')}</div>
+  </div>
+  <div class="card settings-group" style="text-align:center">
+    <p style="opacity:.6;font-size:.8rem;margin-bottom:.8rem">© 2026 RUCHK DUVI · Duvi App<br>Desarrollado por Jaime Andrés Dueñas Vicuña</p>
+    <a href="https://paypal.me/jaimeDuenas" target="_blank" class="coffee-btn">☕ Buy me a coffee · PayPal</a>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════════
+   CANVAS ANNOTATION
+   ════════════════════════════════════════════════════ */
+let canvasCtx=null;
+function setupCanvas(){
+  const cv=$('annotation-canvas');
+  const wr=$('page-content-wrapper');
+  if(!cv||!wr) return;
+  cv.width=wr.clientWidth; cv.height=wr.clientHeight;
+  canvasCtx=cv.getContext('2d');
+  const saved=state.docs.annotations[state.docs.page];
+  if(saved){ const img=new Image(); img.onload=()=>canvasCtx.drawImage(img,0,0); img.src=saved; }
+
+  const gc=e=>{
+    const r=cv.getBoundingClientRect();
+    const t=e.touches?e.touches[0]:e;
+    return[t.clientX-r.left,t.clientY-r.top];
+  };
+  const start=e=>{ e.preventDefault(); state.ann.drawing=true; [state.ann.lx,state.ann.ly]=gc(e); };
+  const draw=e=>{ if(!state.ann.drawing||!canvasCtx) return; e.preventDefault();
+    const[x,y]=gc(e);
+    canvasCtx.beginPath(); canvasCtx.moveTo(state.ann.lx,state.ann.ly); canvasCtx.lineTo(x,y);
+    canvasCtx.strokeStyle=state.ann.color; canvasCtx.lineWidth=state.ann.size;
+    canvasCtx.lineCap='round'; canvasCtx.lineJoin='round';
+    canvasCtx.globalCompositeOperation=state.ann.tool==='eraser'?'destination-out':'source-over';
+    canvasCtx.stroke(); [state.ann.lx,state.ann.ly]=[x,y];
+  };
+  const stop=()=>{ if(!state.ann.drawing) return; state.ann.drawing=false;
+    if(canvasCtx) state.docs.annotations[state.docs.page]=cv.toDataURL();
+  };
+  cv.addEventListener('mousedown',start); cv.addEventListener('mousemove',draw);
+  cv.addEventListener('mouseup',stop); cv.addEventListener('mouseleave',stop);
+  cv.addEventListener('touchstart',start,{passive:false}); cv.addEventListener('touchmove',draw,{passive:false});
+  cv.addEventListener('touchend',stop);
+}
+
+/* ════════════════════════════════════════════════════
+   DASHBOARD BUILD
+   ════════════════════════════════════════════════════ */
+function buildDashboard(){
+  const grid=$('dash-grid');
+  if(!grid) return;
+  const ui=appData.ui[state.lang];
+  grid.innerHTML='';
+
+  // RSS card
+  if(state.rss.enabled){
+    const rss=document.createElement('div');
+    rss.className='section-card';
+    rss.innerHTML=`<div class="section-header"><h3>📰 ${ui.rssTitle}</h3><button class="btn-icon" id="rss-refresh">🔄</button></div>
+    <div>${state.rss.items.length?state.rss.items.slice(0,5).map(it=>`<div class="rss-item"><a href="${it.link}" target="_blank">${it.title}</a><span class="rss-date">${new Date(it.pubDate).toLocaleDateString()}</span></div>`).join(''):'<p style="opacity:.5;font-size:.85rem">'+ui.loading+'</p>'}</div>`;
+    grid.appendChild(rss);
+    $('rss-refresh').onclick=fetchRSS;
+  }
+
+  // Notes
+  const nc=document.createElement('div');
+  nc.className='section-card';
+  nc.innerHTML=`<div class="section-header"><h3>📝 ${ui.notesTitle}</h3></div>
+  <div class="input-group" style="margin-bottom:.8rem">
+    <input type="text" id="n-title" placeholder="${ui.newNotePlaceholder}" style="width:100%">
+    <textarea id="n-content" placeholder="${ui.newNoteContentPlaceholder}" style="width:100%"></textarea>
+    <div style="display:flex;gap:.5rem">
+      <select id="n-folder" style="flex:1"><option value="">${ui.noFolder}</option>${state.folders.map(f=>`<option value="${f.id}">${f.name}</option>`).join('')}</select>
+      <input type="color" id="n-color" value="#ffffff">
+      <button class="btn-sm" id="note-add-btn">${ui.createNoteBtn}</button>
+    </div>
+  </div>
+  <div class="notes-list">${state.notes.map(n=>`<div class="note-item" style="background:${n.color}22;border-left:4px solid ${n.color}">
+    <div class="note-header"><strong>${n.title}</strong><button class="delete-note-btn" data-id="${n.id}">×</button></div>
+    <p style="font-size:.85rem;opacity:.8">${n.content}</p>
+  </div>`).join('')}</div>`;
+  grid.appendChild(nc);
+  $('note-add-btn').onclick=()=>{
+    const t=$('n-title').value;
+    if(!t) return;
+    state.notes.push({id:uid(),title:t,content:$('n-content').value,folderId:$('n-folder').value||null,color:$('n-color').value,createdAt:Date.now()});
+    addLog('Note created','success'); buildDashboard();
+  };
+  nc.querySelectorAll('.delete-note-btn').forEach(b=>b.onclick=()=>{ state.notes=state.notes.filter(n=>n.id!==b.dataset.id); buildDashboard(); });
+
+  // Links
+  const lc=document.createElement('div');
+  lc.className='section-card';
+  lc.innerHTML=`<div class="section-header"><h3>🔗 ${ui.linksTitle}</h3></div>
+  <div class="link-controls" style="margin-bottom:.8rem">
+    <input type="text" id="lk-label" placeholder="${ui.linkLabelPlaceholder}" style="width:100%">
+    <input type="text" id="lk-url" placeholder="${ui.linkUrlPlaceholder}" style="width:100%">
+    <div style="display:flex;gap:.5rem"><input type="color" id="lk-color" value="#00f3ff"><button class="btn-sm" id="link-add-btn">${ui.addLinkBtn}</button></div>
+  </div>
+  <div class="buttons-list">${state.links.map(b=>`<div class="custom-link-wrapper"><a href="${b.url}" target="_blank" class="custom-link-btn" style="background:${b.color}">${b.label}</a><button class="delete-link-btn" data-id="${b.id}">×</button></div>`).join('')}</div>`;
+  grid.appendChild(lc);
+  $('link-add-btn').onclick=()=>{
+    const l=$('lk-label').value,u=$('lk-url').value;
+    if(!l||!u) return;
+    state.links.push({id:uid(),label:l,url:u,color:$('lk-color').value});
+    addLog('Link added','success'); buildDashboard();
+  };
+  lc.querySelectorAll('.delete-link-btn').forEach(b=>b.onclick=()=>{ state.links=state.links.filter(x=>x.id!==b.dataset.id); buildDashboard(); });
+}
+
+/* ════════════════════════════════════════════════════
+   EVENTS — wired after each render
+   ════════════════════════════════════════════════════ */
+function wireScreen(){
+  const ui=appData.ui[state.lang];
+  const fab=$('add-fab');
+  if(fab&&state.screen!=='multimedia') fab.style.display='none';
+
+  // Home
+  const ls=$('lang-sel');
+  if(ls) ls.onchange=e=>{ state.lang=e.target.value; LS.set('lang',state.lang); render(); };
+  const sqb=$('start-quiz-btn');
+  if(sqb) sqb.onclick=()=>{ state.quiz={qi:0,score:0,answers:[],selected:false}; state.screen='quiz'; render(); };
+  const rqb=$('resume-quiz-btn');
+  if(rqb) rqb.onclick=()=>{ state.screen='quiz'; render(); };
+  const pt=$('pomo-toggle');
+  if(pt) pt.onclick=togglePomo;
+  const pr=$('pomo-reset');
+  if(pr) pr.onclick=resetPomo;
+  buildDashboard();
+
+  // Quiz
+  document.querySelectorAll('.option-btn').forEach(b=>b.onclick=()=>{
+    if(state.quiz.selected) return;
+    const i=parseInt(b.dataset.i);
+    state.quiz.selected=true; state.quiz.answers[state.quiz.qi]=i;
+    const q=appData.quiz[state.lang][state.quiz.qi];
+    if(i===q.respuestaCorrecta){ state.quiz.score++; soundCorrect(); } else { soundWrong(); }
+    LS.set('quiz',{qi:state.quiz.qi,score:state.quiz.score,answers:state.quiz.answers,lang:state.lang});
+    const expl=$('expl');
+    if(expl){ expl.innerHTML=`<p><strong>Explicación:</strong> ${q.explicacion}</p>`; expl.style.display='block'; }
+    document.querySelectorAll('.option-btn').forEach((btn,ii)=>{
+      btn.disabled=true;
+      if(ii===q.respuestaCorrecta) btn.classList.add('correct');
+      else if(ii===i) btn.classList.add('incorrect');
+    });
+    const nb=$('next-btn');
+    if(nb) nb.style.display='inline-block';
+  });
+  const hb=$('hint-btn');
+  if(hb) hb.onclick=()=>{
+    const q=appData.quiz[state.lang][state.quiz.qi];
+    const e=$('expl'); if(e){ e.innerHTML=`<p><em>Pista: ${q.pista}</em></p>`; e.style.display='block'; }
+  };
+  const rb=$('reveal-btn');
+  if(rb) rb.onclick=()=>{
+    const q=appData.quiz[state.lang][state.quiz.qi];
+    const e=$('expl'); if(e){ e.innerHTML=`<p><strong>Explicación:</strong> ${q.explicacion}</p>`; e.style.display='block'; }
+    const b=document.querySelector(`.option-btn[data-i="${q.respuestaCorrecta}"]`);
+    if(b){ b.classList.add('correct'); document.querySelectorAll('.option-btn').forEach(x=>x.disabled=true); }
+    state.quiz.selected=true; state.quiz.answers[state.quiz.qi]=q.respuestaCorrecta;
+    const nb=$('next-btn'); if(nb) nb.style.display='inline-block';
+  };
+  const nb=$('next-btn');
+  if(nb) nb.onclick=()=>{ state.quiz.qi++; state.quiz.selected=false; if(state.quiz.qi>=appData.quiz[state.lang].length) state.screen='results'; render(); };
+  const rstb=$('restart-btn');
+  if(rstb) rstb.onclick=()=>{ state.quiz={qi:0,score:0,answers:[],selected:false}; state.screen='quiz'; LS.set('quiz',null); render(); };
+
+  // Calendar
+  const pm=$('prev-mo');
+  if(pm) pm.onclick=()=>{ state.cal.date.setMonth(state.cal.date.getMonth()-1); render(); };
+  const nm=$('next-mo');
+  if(nm) nm.onclick=()=>{ state.cal.date.setMonth(state.cal.date.getMonth()+1); render(); };
+  document.querySelectorAll('.day[data-date]').forEach(d=>d.onclick=()=>showEventModal(d.dataset.date));
+  document.querySelectorAll('.delete-ev').forEach(b=>b.onclick=()=>{ state.cal.events=state.cal.events.filter(e=>e.id!==b.dataset.id); render(); });
+
+  // Docs
+  const ppg=$('prev-pg');
+  if(ppg) ppg.onclick=()=>{ if(state.docs.page>0){state.docs.page--;render();} };
+  const npg=$('next-pg');
+  const dd=(appData.docs[state.lang]||appData.docs.es);
+  if(npg) npg.onclick=()=>{ if(state.docs.page<dd.length-1){state.docs.page++;render();} };
+  document.querySelectorAll('.tool-btn[data-tool]').forEach(b=>b.onclick=()=>{ state.ann.tool=b.dataset.tool; render(); });
+  document.querySelectorAll('.color-swatch').forEach(b=>b.onclick=()=>{ state.ann.color=b.dataset.color; render(); });
+  document.querySelectorAll('.size-btn').forEach(b=>b.onclick=()=>{ state.ann.size=parseInt(b.dataset.sz); render(); });
+  const cc=$('clear-canvas');
+  if(cc) cc.onclick=()=>{ if(canvasCtx){ canvasCtx.clearRect(0,0,canvasCtx.canvas.width,canvasCtx.canvas.height); delete state.docs.annotations[state.docs.page]; }};
+  const adb=$('add-doc-btn');
+  if(adb) adb.onclick=()=>{
+    const url=$('doc-url-in').value, ti=$('doc-ti-in').value;
+    if(!url||!ti) return;
+    const fu=url.includes('drive.google.com')?url.replace('/view','/preview'):url;
+    (appData.docs[state.lang]||appData.docs.es).push({title:ti,content:`Ver documento: ${fu}`});
+    addLog('Doc added','success'); render();
+  };
+  setTimeout(()=>setupCanvas(),50);
+
+  // Examen
+  document.querySelectorAll('.option-btn').forEach(b=>b.onclick=()=>{
+    if(state.examen.selected) return;
+    const i=parseInt(b.dataset.i);
+    state.examen.selected=true; state.examen.answers[state.examen.qi]=i;
+    const q=appData.examenVial[state.examen.qi];
+    if(i===q.correctAnswer) state.examen.score++;
+    if(i===q.correctAnswer) soundCorrect(); else soundWrong();
+    render();
+  });
+  const shb=$('show-hint-btn');
+  if(shb) shb.onclick=()=>{ state.examen.hint=true; render(); };
+  const neb=$('next-exam-btn');
+  if(neb) neb.onclick=()=>{ state.examen.qi++; state.examen.selected=false; state.examen.hint=false; render(); };
+  const reb=$('restart-exam-btn');
+  if(reb) reb.onclick=()=>{ state.examen={qi:0,score:0,answers:[],selected:false,hint:false}; render(); };
+
+  // Settings
+  document.querySelectorAll('.flag-btn').forEach(b=>b.onclick=()=>{ state.lang=b.dataset.lang; LS.set('lang',state.lang); render(); });
+  document.querySelectorAll('.theme-select-btn').forEach(b=>b.onclick=()=>{ state.theme=b.dataset.theme; LS.set('theme',state.theme); applyTheme(); render(); });
+  const pwi=$('pomo-work-in');
+  if(pwi) pwi.onchange=()=>{ state.pomo.workMin=parseInt(pwi.value)||25; if(!state.pomo.running&&state.pomo.work) state.pomo.left=state.pomo.workMin*60; render(); };
+  const pbi=$('pomo-break-in');
+  if(pbi) pbi.onchange=()=>{ state.pomo.breakMin=parseInt(pbi.value)||5; if(!state.pomo.running&&!state.pomo.work) state.pomo.left=state.pomo.breakMin*60; render(); };
+  const expb=$('exp-btn');
+  if(expb) expb.onclick=()=>{
+    const blob=new Blob([JSON.stringify({state,multimedia:appData.multimedia})],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ruchk-duvi.json'; a.click();
+    addLog('Data exported','success');
+  };
+  const impb=$('imp-btn');
+  if(impb) impb.onclick=()=>{
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json';
+    inp.onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader(); r.onload=re=>{ try{
+        const d=JSON.parse(re.target.result);
+        if(d.state) Object.assign(state,d.state);
+        if(d.multimedia) appData.multimedia.push(...d.multimedia);
+        addLog('Data imported','success'); render();
+      }catch{ addLog('Import failed','error'); }};
+      r.readAsText(f);
+    }; inp.click();
+  };
+  const resetb=$('reset-btn');
+  if(resetb) resetb.onclick=()=>{ if(confirm('¿Borrar todos los datos? No se puede deshacer.')) { localStorage.clear(); location.reload(); }};
+  const clb=$('clear-logs-btn');
+  if(clb) clb.onclick=()=>{ state.logs=[]; render(); };
+
+  // Extra wiring for new features
+  wireSettingsExtra();
+  wireExamenExtra();
+  wireSounds();
+}
+
+/* ════════════════════════════════════════════════════
+   EVENT MODAL
+   ════════════════════════════════════════════════════ */
+function showEventModal(date){
+  const ui=appData.ui[state.lang];
+  const ov=document.createElement('div');
+  ov.className='modal-overlay';
+  ov.innerHTML=`<div class="modal-content">
+    <h3>${ui.calendarAddEvent} (${date})</h3>
+    <input type="text" id="ev-title" placeholder="${ui.calendarEventTitle}">
+    <input type="time" id="ev-time" value="12:00">
+    <textarea id="ev-desc" placeholder="${ui.eventDescription}"></textarea>
+    <div class="flex gap-10">
+      <button class="btn-primary" id="ev-save">💾 ${ui.calendarEventSave}</button>
+      <button class="btn" id="ev-cancel">${ui.cancelBtn}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  $('ev-save').onclick=()=>{
+    const t=$('ev-title').value;
+    if(!t) return;
+    state.cal.events.push({id:uid(),date,time:$('ev-time').value,title:t,description:$('ev-desc').value,notified:false});
+    if(!state.cal.studyDays.includes(date)) state.cal.studyDays.push(date);
+    LS.set('studyDays',state.cal.studyDays);
+    addLog(`Event: ${t}`,'success'); ov.remove(); render();
+  };
+  $('ev-cancel').onclick=()=>ov.remove();
+}
+
+/* ════════════════════════════════════════════════════
+   ADD MEDIA MODAL
+   ════════════════════════════════════════════════════ */
+function initAddMediaModal(){
+  const modal=$('add-media-modal');
+  const fab=$('add-fab');
+  let selType='pdf';
+
+  fab.onclick=()=>{ modal.classList.add('open'); };
+  $('am-cancel-btn').onclick=()=>{ modal.classList.remove('open'); };
+  modal.onclick=e=>{ if(e.target===modal) modal.classList.remove('open'); };
+
+  modal.querySelectorAll('.type-card').forEach(tc=>{
+    tc.onclick=()=>{
+      modal.querySelectorAll('.type-card').forEach(x=>x.classList.remove('selected'));
+      tc.classList.add('selected');
+      selType=tc.dataset.type;
+    };
+  });
+
+  $('am-save-btn').onclick=()=>{
+    const title=$('am-title').value.trim();
+    const url=$('am-url').value.trim();
+    const desc=$('am-desc').value.trim();
+    const cover=$('am-cover').value.trim();
+    if(!title||!url){ alert('Título y URL son obligatorios.'); return; }
+    let finalUrl=url;
+    if(url.includes('drive.google.com')&&!url.includes('/preview')){
+      finalUrl=url.replace('/view','/preview').replace(/\/edit.*/,'/preview');
+    }
+    const type=selType==='podcast'?'podcast':selType;
+    appData.multimedia.push({title,type,url:finalUrl,description:desc||`Añadido el ${new Date().toLocaleDateString()}`,cover});
+    addLog(`Multimedia añadido: ${title}`,'success');
+    $('am-title').value=''; $('am-url').value=''; $('am-desc').value=''; $('am-cover').value='';
+    modal.classList.remove('open');
+    state.screen='multimedia';
+    render();
+  };
+}
+
+/* ════════════════════════════════════════════════════
+   RSS
+   ════════════════════════════════════════════════════ */
+async function fetchRSS(){
+  try{
+    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.scmp.com/rss/91/feed')}`);
+    const d=await r.json();
+    if(d.status==='ok'){ state.rss.items=d.items; addLog('RSS updated','success'); if(state.screen==='home') buildDashboard(); }
+  }catch{ addLog('RSS fetch failed','error'); }
+}
+
+/* ════════════════════════════════════════════════════
+   RENDER LOOP
+   ════════════════════════════════════════════════════ */
+function render(){
+  const ui=appData.ui[state.lang];
+  let html='';
+  switch(state.screen){
+    case 'home':      html=renderHome(); break;
+    case 'quiz':      html=renderQuiz(); break;
+    case 'results':   html=renderResults(); break;
+    case 'calendar':  html=renderCalendar(); break;
+    case 'docs':      html=renderDocs(); break;
+    case 'multimedia':html=renderMultimedia(); break;
+    case 'examen':    html=renderExamen(); break;
+    case 'settings':  html=renderSettings(); break;
+    default:          html=renderHome();
+  }
+  app.innerHTML=`<div class="main-content">${html}</div>`;
+  wireScreen();
+  renderPomoNav();
+
+  // Update menu links
+  document.querySelectorAll('#side-menu a[data-screen]').forEach(l=>{
+    l.classList.toggle('active',l.dataset.screen===state.screen);
+    const labels={home:ui.menuDashboard,calendar:ui.menuCalendar,docs:ui.menuDocs,multimedia:ui.menuMultimedia,settings:ui.menuSettings,examen:'Examen Vial'};
+    l.textContent=labels[l.dataset.screen]||l.textContent;
+  });
+
+  // Close menu on mobile after navigation
+  const sm=$('side-menu');
+  sm.classList.toggle('open',state.menuOpen);
+  $('menu-toggle').classList.toggle('open',state.menuOpen);
+
+  // Font size
+  document.documentElement.style.fontSize=state.settings.fontSize==='small'?'14px':state.settings.fontSize==='large'?'18px':'16px';
+}
+
+/* ════════════════════════════════════════════════════
+   SOUND ENGINE — Base64 Web Audio (no external files)
+   ════════════════════════════════════════════════════ */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let _actx = null;
+function getACtx(){ if(!_actx) try{ _actx=new AudioCtx(); }catch{} return _actx; }
+
+function playTone(type,freq,dur,vol=0.08,detune=0){
+  if(!state.settings.sound) return;
+  const ac=getACtx(); if(!ac) return;
+  try{
+    const osc=ac.createOscillator();
+    const gain=ac.createGain();
+    const filt=ac.createBiquadFilter();
+    filt.type='lowpass'; filt.frequency.value=800;
+    osc.connect(filt); filt.connect(gain); gain.connect(ac.destination);
+    osc.type=type; osc.frequency.value=freq; osc.detune.value=detune;
+    gain.gain.setValueAtTime(vol,ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
+    osc.start(ac.currentTime); osc.stop(ac.currentTime+dur);
+  }catch{}
+}
+
+// Soft click: short sine blip
+function soundClick(){ playTone('sine',600,0.08,0.06); setTimeout(()=>playTone('sine',800,0.05,0.03),30); }
+// Correct answer: ascending chime
+function soundCorrect(){ [520,660,780].forEach((f,i)=>setTimeout(()=>playTone('sine',f,0.15,0.07),i*80)); }
+// Wrong answer: descending low
+function soundWrong(){ [300,220].forEach((f,i)=>setTimeout(()=>playTone('sawtooth',f,0.12,0.04),i*100)); }
+// Navigation: soft whoosh
+function soundNav(){ playTone('sine',440,0.06,0.04); playTone('sine',550,0.08,0.03,200); }
+// Pomodoro end: gentle bells
+function soundPomoEnd(){ [880,1100,880,660].forEach((f,i)=>setTimeout(()=>playTone('sine',f,0.2,0.06),i*150)); }
+
+// Wheel / tire on asphalt: low rumble + friction
+function soundWheelRoll(){
+  const ac=getACtx(); if(!ac) return;
+  try{
+    // Low rumble (road contact)
+    const buf=ac.createBuffer(1,ac.sampleRate*1.2,ac.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*0.06*Math.exp(-i/(ac.sampleRate*0.8));
+    const src=ac.createBufferSource();
+    const filt=ac.createBiquadFilter();
+    filt.type='bandpass'; filt.frequency.value=90; filt.Q.value=2;
+    const gain=ac.createGain();
+    src.buffer=buf; src.connect(filt); filt.connect(gain); gain.connect(ac.destination);
+    gain.gain.setValueAtTime(0.5,ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.9,ac.currentTime+0.3);
+    gain.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+1.2);
+    src.start(ac.currentTime);
+    // High-freq tire friction
+    const osc=ac.createOscillator();
+    const filt2=ac.createBiquadFilter();
+    filt2.type='highpass'; filt2.frequency.value=1200;
+    const gain2=ac.createGain();
+    osc.type='sawtooth'; osc.frequency.value=160;
+    osc.connect(filt2); filt2.connect(gain2); gain2.connect(ac.destination);
+    gain2.gain.setValueAtTime(0.03,ac.currentTime);
+    gain2.gain.linearRampToValueAtTime(0.06,ac.currentTime+0.4);
+    gain2.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+1.0);
+    osc.start(ac.currentTime); osc.stop(ac.currentTime+1.0);
+  }catch{}
+}
+
+// Auto-wire all btn clicks for sound
+function wireSounds(){
+  if(!state.settings.sound) return;
+  document.querySelectorAll('button:not([data-nosound])').forEach(b=>{
+    if(!b._soundWired){ b._soundWired=true; b.addEventListener('click',()=>soundClick(),{passive:true}); }
+  });
+}
+
+/* ════════════════════════════════════════════════════
+   LOGO WHEEL ANIMATION
+   ════════════════════════════════════════════════════ */
+function animateLogo(){
+  const wrap=$('logo-wheel-wrap');
+  if(!wrap||wrap.classList.contains('logo-spinning')) return;
+  soundWheelRoll();
+  wrap.classList.add('logo-spinning');
+  // Add asphalt streak
+  const streak=document.createElement('div');
+  streak.className='asphalt-streak';
+  wrap.appendChild(streak);
+  setTimeout(()=>{ wrap.classList.remove('logo-spinning'); streak.remove(); },900);
+}
+
+/* ════════════════════════════════════════════════════
+   PRIVACY POLICY MODAL
+   ════════════════════════════════════════════════════ */
+function showPrivacyPolicy(){
+  const el=document.createElement('div');
+  el.className='fullscreen-modal';
+  el.innerHTML=`<div class="fullscreen-modal-inner">
+    <button class="close-modal-btn" onclick="this.closest('.fullscreen-modal').remove()">✕ Cerrar</button>
+    <h1>🔒 Política de Privacidad & Avisos Legales</h1>
+    <p><em>Última actualización: 2026 · RUCHK DUVI App</em></p>
+    <p style="background:rgba(0,243,255,.07);padding:.8rem;border-radius:6px;border-left:3px solid var(--primary-color)">
+      Esta aplicación es de uso educativo para la preparación del examen teórico de conducir de Hong Kong. El uso de esta app implica la aceptación de los presentes términos.
+    </p>
+    <h2>1. Titularidad</h2>
+    <p>© 2026 RUCHK DUVI App. Todos los derechos reservados. Creado y desarrollado por <strong>Jaime Andrés Dueñas Vicuña</strong>. Todos los contenidos, código fuente, diseño y materiales de estudio incluidos en esta aplicación son propiedad intelectual del autor, salvo donde se indique lo contrario.</p>
+    <h2>2. Datos personales</h2>
+    <p>Esta aplicación funciona <strong>completamente de forma local</strong> en el dispositivo del usuario. No se recopilan, transmiten ni almacenan datos personales en servidores externos. Todo el progreso, notas y configuraciones se guardan únicamente en el almacenamiento local (<code>localStorage</code>) del navegador del usuario.</p>
+    <ul>
+      <li>No se utilizan cookies de seguimiento.</li>
+      <li>No se comparten datos con terceros.</li>
+      <li>Las claves de API (Gemini/Groq) introducidas por el usuario se almacenan localmente y nunca se transmiten salvo a los servicios de IA correspondientes de forma directa.</li>
+    </ul>
+    <h2>3. Servicios de terceros</h2>
+    <p>La app puede conectarse a los siguientes servicios externos:</p>
+    <ul>
+      <li><strong>Google Fonts:</strong> Para la carga de tipografías. Ver política en fonts.google.com.</li>
+      <li><strong>RSS2JSON API:</strong> Para la lectura de feeds de noticias. No se envían datos personales.</li>
+      <li><strong>Google Gemini API / Groq AI:</strong> Únicamente si el usuario configura su propia clave API. Las consultas se envían directamente a dichos servicios.</li>
+      <li><strong>Google Drive:</strong> Para la visualización de PDFs embebidos de dominio público.</li>
+    </ul>
+    <h2>4. Exactitud del contenido</h2>
+    <p>El contenido de esta aplicación tiene fines <strong>exclusivamente educativos y de práctica</strong>. No constituye asesoramiento legal ni oficial. Las preguntas y respuestas son elaboraciones del autor basadas en el Road Users' Code de Hong Kong. El autor no garantiza la exactitud total ni se responsabiliza de decisiones tomadas basándose en el contenido de la app. Para información oficial, consúltese el Departamento de Transporte de Hong Kong.</p>
+    <h2>5. Propiedad intelectual</h2>
+    <p>Queda prohibida la reproducción, distribución o modificación de esta aplicación o sus contenidos sin autorización expresa y por escrito del autor. El uso personal y educativo está permitido. No está permitida la comercialización, reventa ni sublicencia del presente software sin consentimiento previo.</p>
+    <h2>6. Limitación de responsabilidad</h2>
+    <p>El autor no será responsable de ningún daño directo, indirecto, incidental o consecuente derivado del uso o imposibilidad de uso de esta aplicación. La app se proporciona "tal cual" sin garantías de ningún tipo.</p>
+    <h2>7. Cambios en la política</h2>
+    <p>El autor se reserva el derecho de modificar estos términos en cualquier momento. Los cambios entrarán en vigor desde su publicación en la aplicación.</p>
+    <h2>8. Contacto</h2>
+    <p>Para cualquier consulta legal o de privacidad, contactar a través de <a href="https://www.linkedin.com/in/jaime-andr%C3%A9s-due%C3%B1as-vicu%C3%B1a" target="_blank" style="color:var(--primary-color)">LinkedIn</a>.</p>
+    <div style="text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #333;opacity:.5;font-size:.78rem">
+      © 2026 RUCHK DUVI App — Jaime Andrés Dueñas Vicuña — Todos los derechos reservados
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+}
+
+/* ════════════════════════════════════════════════════
+   MANUAL / USER GUIDE MODAL
+   ════════════════════════════════════════════════════ */
+function showManual(){
+  const el=document.createElement('div');
+  el.className='fullscreen-modal';
+  el.innerHTML=`<div class="fullscreen-modal-inner">
+    <button class="close-modal-btn" onclick="this.closest('.fullscreen-modal').remove()">✕ Cerrar</button>
+    <h1>📖 Manual de Usuario — RUCHK DUVI App</h1>
+    <p>Guía completa de todas las funciones de la aplicación.</p>
+
+    <h2>🏠 Panel Principal (Dashboard)</h2>
+    <p>La pantalla de inicio centraliza todas las herramientas de estudio. Desde aquí puedes:</p>
+    <ul>
+      <li><strong>Cambiar idioma:</strong> Usa el selector de idioma en la esquina superior derecha del panel. Disponible en 7 idiomas: Español, English, 中文, Filipino, हिन्दी, Русский, Melayu.</li>
+      <li><strong>Iniciar el Examen de Quiz:</strong> Pulsa "Empezar Examen" para comenzar el cuestionario de teoría vial de Hong Kong en el idioma seleccionado.</li>
+      <li><strong>Continuar quiz:</strong> Si dejaste el examen a medias, aparecerá el botón "Continuar".</li>
+      <li><strong>Pomodoro:</strong> Temporizador de estudio con sesiones de trabajo y descanso configurables. Pulsa Iniciar/Pausar/Reiniciar.</li>
+      <li><strong>Notas:</strong> Crea notas de texto con colores personalizados y organízalas en carpetas.</li>
+      <li><strong>Noticias RSS:</strong> Feed de noticias de Hong Kong actualizable en tiempo real.</li>
+      <li><strong>Enlaces personalizados:</strong> Guarda URLs de recursos externos con etiqueta y color propios.</li>
+    </ul>
+
+    <h2>📅 Calendario de Estudio</h2>
+    <p>Visualiza y planifica tus sesiones de estudio mes a mes:</p>
+    <ul>
+      <li>Pulsa cualquier día para añadir un evento con título, hora y descripción.</li>
+      <li>Los días con eventos se marcan con un punto de color.</li>
+      <li>Los días en que hayas estudiado se resaltan automáticamente.</li>
+      <li>Navega entre meses con las flechas &lt; &gt;.</li>
+      <li>Recibirás notificaciones en pantalla cuando llegue la hora de un evento.</li>
+    </ul>
+
+    <h2>📄 Documentos (Docs)</h2>
+    <p>Visualizador del Manual del Conductor con herramienta de anotación:</p>
+    <ul>
+      <li><strong>Paginación:</strong> Navega entre las páginas del manual con los botones Anterior / Siguiente.</li>
+      <li><strong>Anotaciones:</strong> Activa el pincel y dibuja directamente sobre el texto. Elige color y tamaño de trazo.</li>
+      <li><strong>Goma de borrar:</strong> Elimina anotaciones específicas sin borrar el texto.</li>
+      <li><strong>Limpiar:</strong> Borra todas las anotaciones de la página actual.</li>
+      <li><strong>Añadir documentos:</strong> Pega la URL de un PDF de Google Drive o externo con un título y se añade al manual.</li>
+      <li><strong>Ver PDF completo:</strong> Abre el PDF oficial en una nueva pestaña.</li>
+    </ul>
+
+    <h2>🎬 Multimedia</h2>
+    <p>Biblioteca de recursos audiovisuales para el estudio:</p>
+    <ul>
+      <li>Incluye PDFs embebidos, guías de conducción y recursos de estudio.</li>
+      <li><strong>Botón ➕ (FAB):</strong> Visible solo en esta pantalla. Permite añadir nuevos archivos de los siguientes tipos:
+        <ul>
+          <li>📄 <strong>PDF / Doc:</strong> URLs de Google Drive o cualquier PDF web.</li>
+          <li>🎙️ <strong>Podcast:</strong> URLs de audio MP3/AAC con visualizador de ondas animado.</li>
+          <li>🎬 <strong>Vídeo:</strong> Archivos de vídeo MP4 reproducibles.</li>
+          <li>🎵 <strong>Audio:</strong> Archivos de audio con reproductor.</li>
+          <li>🌐 <strong>Embed URL:</strong> Páginas web o servicios embebibles.</li>
+          <li>🖼️ <strong>Imagen:</strong> Imágenes educativas.</li>
+        </ul>
+      </li>
+      <li>Las URLs de Google Drive se convierten automáticamente al formato de previsualización.</li>
+    </ul>
+
+    <h2>🚗 Examen Vial</h2>
+    <p>30 preguntas específicas del examen de conducir de Hong Kong con sistema de evaluación:</p>
+    <ul>
+      <li>Barra de progreso en tiempo real.</li>
+      <li>Puntuación acumulada visible durante el examen.</li>
+      <li>Botón "💡 Pista" para obtener ayuda antes de responder.</li>
+      <li>Explicación detallada tras cada respuesta.</li>
+      <li><strong>🌐 Traductor IA:</strong> Traduce la pregunta actual al idioma que elijas usando Gemini o Groq AI. Configura tu API key en Ajustes.</li>
+      <li>Resultado final con porcentaje y mensaje motivacional.</li>
+    </ul>
+
+    <h2>⚙️ Configuración (Settings)</h2>
+    <ul>
+      <li><strong>Idioma:</strong> Cambia el idioma de toda la interfaz con los botones de bandera.</li>
+      <li><strong>Tema visual:</strong> 5 temas disponibles: Claro, Oscuro, Cyberpunk, Matrix, Retro.</li>
+      <li><strong>Pomodoro:</strong> Configura la duración del trabajo y el descanso. Consulta el historial de sesiones.</li>
+      <li><strong>Sonidos de interfaz:</strong> Activa/desactiva los efectos de sonido de la app.</li>
+      <li><strong>API Keys IA (Gemini / Groq):</strong> Introduce tus claves API para usar el traductor IA en el Examen Vial. Las claves se guardan localmente.</li>
+      <li><strong>Exportar / Importar datos:</strong> Guarda y restaura todo el contenido (notas, eventos, multimedia añadida) en formato JSON.</li>
+      <li><strong>Reset completo:</strong> Borra todos los datos y reinicia la app.</li>
+      <li><strong>Registros del sistema:</strong> Consulta el historial de acciones y errores de la sesión.</li>
+    </ul>
+
+    <h2>🔊 Sonidos y efectos</h2>
+    <ul>
+      <li>Los botones producen un sonido suave al pulsarlos (activable en Ajustes).</li>
+      <li>Respuesta correcta → sonido de campana ascendente.</li>
+      <li>Respuesta incorrecta → sonido descendente grave.</li>
+      <li>El <strong>logo</strong> al pulsarlo produce sonido de rueda sobre asfalto con efecto de brillo.</li>
+      <li>El Pomodoro emite una señal al terminar cada sesión.</li>
+    </ul>
+
+    <h2>💡 Consejos de uso</h2>
+    <ul>
+      <li>Instala la app en tu pantalla de inicio (PWA) para acceso rápido sin conexión.</li>
+      <li>Exporta tus datos regularmente para no perder el progreso.</li>
+      <li>Usa el modo Cyberpunk o Matrix por la noche para reducir la fatiga visual.</li>
+      <li>El Pomodoro está sincronizado con la barra de navegación para estudiar sin perder el contador.</li>
+    </ul>
+
+    <div style="text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #333;opacity:.5;font-size:.78rem">
+      © 2026 RUCHK DUVI App — Jaime Andrés Dueñas Vicuña — v2.0
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+}
+
+/* ════════════════════════════════════════════════════
+   AI TRANSLATOR (Gemini + Groq)
+   ════════════════════════════════════════════════════ */
+async function translateWithAI(text, targetLang){
+  const provider = state.settings.aiProvider || 'gemini';
+  const key = provider==='groq' ? (state.settings.groqKey||'') : (state.settings.geminiKey||'');
+  if(!key){ return '⚠️ Configura tu API Key en Ajustes → API Keys IA'; }
+
+  const prompt = `Translate the following driving theory question to ${targetLang}. Return ONLY the translation, no explanations:\n\n${text}`;
+
+  try {
+    if(provider === 'groq'){
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+        body:JSON.stringify({model:'llama3-8b-8192',messages:[{role:'user',content:prompt}],max_tokens:400})
+      });
+      const d = await r.json();
+      return d.choices?.[0]?.message?.content || JSON.stringify(d);
+    } else {
+      // Gemini
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})
+      });
+      const d = await r.json();
+      return d.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(d);
+    }
+  } catch(e){ return '❌ Error: '+e.message; }
+}
+
+/* ════════════════════════════════════════════════════
+   UPDATED RENDER EXAMEN — with AI translator
+   ════════════════════════════════════════════════════ */
+const _origRenderExamen = renderExamen;
+function renderExamen(){
+  const exam=appData.examenVial;
+  const {qi,score,answers,selected,hint}=state.examen;
+  if(qi>=exam.length){
+    const pct=Math.round(score/exam.length*100);
+    return `<div class="card" style="text-align:center;padding:2rem">
+      <h1 style="font-family:'Orbitron',sans-serif;color:var(--primary-color)">Examen Finalizado</h1>
+      <div class="score-circle"><span class="score-num">${score}/${exam.length}</span><span class="score-percent">${pct}%</span></div>
+      <p style="font-size:1rem;margin-top:.5rem">${pct>=80?'¡Excelente! Listo para el asfalto.':'Repasa un poco más.'}</p>
+      <button class="btn-primary" id="restart-exam-btn" style="max-width:200px;margin:.5rem auto 0">Reiniciar</button>
+    </div>`;
+  }
+  const q=exam[qi];
+  const opts=q.options.map((o,i)=>{
+    let cls='option-btn';
+    if(selected){ if(i===q.correctAnswer) cls+=' correct'; else if(answers[qi]===i) cls+=' incorrect'; }
+    return `<button class="${cls}" data-i="${i}" ${selected?'disabled':''}><span class="option-prefix">${String.fromCharCode(65+i)}</span>${o}</button>`;
+  }).join('');
+
+  const aiLangs=['English','中文 (Chinese)','Filipino','हिन्दी (Hindi)','Русский (Russian)','Melayu','Français','Deutsch','日本語','한국어','Português'];
+
+  return `<div class="exam-header">
+    <div class="progress-bar-container"><div class="progress-bar" style="width:${qi/exam.length*100}%"></div></div>
+    <div class="exam-stats"><span>Pregunta ${qi+1} de ${exam.length}</span><span>Puntuación: ${score}</span></div>
+  </div>
+  <div class="card question-card"><h2>${q.question}</h2>
+    <div class="options-container">${opts}</div>
+    ${selected?`<div class="explanation-box"><p><strong>Explicación:</strong> ${q.explanation}</p></div>`:''}
+    ${!selected?`<div class="exam-actions"><button class="btn-sm" id="show-hint-btn">💡 Pista</button></div>${hint?`<p class="hint-text">${q.hint}</p>`:''}`:''}</div>
+  ${selected?`<button class="btn-primary" id="next-exam-btn" style="max-width:200px;margin:.5rem auto 0;display:block">Siguiente ›</button>`:''}
+  <div class="ai-translator-box">
+    <h4>🌐 Traducir pregunta con IA</h4>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+      <select id="ai-lang-sel" style="flex:1;min-width:140px">${aiLangs.map(l=>`<option value="${l}">${l}</option>`).join('')}</select>
+      <select id="ai-prov-sel" style="width:100px">
+        <option value="gemini" ${(state.settings.aiProvider||'gemini')==='gemini'?'selected':''}>Gemini</option>
+        <option value="groq" ${state.settings.aiProvider==='groq'?'selected':''}>Groq AI</option>
+      </select>
+      <button class="btn-sm" id="ai-translate-btn">🔄 Traducir</button>
+    </div>
+    <div class="translator-result" id="ai-result">${state.examen.lastTranslation||'Pulsa "Traducir" para ver la pregunta en otro idioma…'}</div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════════
+   UPDATED RENDER SETTINGS — with AI API keys + sounds
+   ════════════════════════════════════════════════════ */
+const _origRenderSettings = renderSettings;
+function renderSettings(){
+  const ui=appData.ui[state.lang];
+  const langs=[['es','🇪🇸'],['en','🇺🇸'],['zh','🇭🇰'],['tl','🇵🇭'],['hi','🇮🇳'],['ru','🇷🇺'],['ms','🇲🇾']];
+  const themes=['light','dark','cyberpunk','matrix','retro'];
+  return `<div style="font-family:'Orbitron',sans-serif;color:var(--primary-color);font-size:1.1rem;margin-bottom:1.5rem">⚙️ ${ui.menuSettings}</div>
+  <div class="card settings-group">
+    <h3>🌍 ${ui.settingsLanguage}</h3>
+    <div class="flags-container">${langs.map(([c,f])=>`<button class="flag-btn ${state.lang===c?'active':''}" data-lang="${c}">${f}</button>`).join('')}</div>
+  </div>
+  <div class="card settings-group">
+    <h3>🎨 ${ui.settingsTheme}</h3>
+    <div class="theme-options">${themes.map(t=>`<button class="btn-sm theme-select-btn ${state.theme===t?'active':''}" data-theme="${t}">${t}</button>`).join('')}</div>
+  </div>
+  <div class="card settings-group">
+    <h3>🔊 Sonidos de Interfaz</h3>
+    <div class="settings-row">
+      <span>Efectos de sonido activados</span>
+      <input type="checkbox" id="set-sound" ${state.settings.sound?'checked':''}>
+    </div>
+    <p style="font-size:.78rem;opacity:.5;margin-top:.4rem">Sonidos suaves al pulsar botones, respuestas, pomodoro y logo.</p>
+  </div>
+  <div class="card settings-group">
+    <h3>⏱️ Pomodoro</h3>
+    <div class="settings-row"><span>${ui.pomodoroWork}</span><input type="number" id="pomo-work-in" value="${state.pomo.workMin}" min="1" max="90" style="width:70px"></div>
+    <div class="settings-row"><span>${ui.pomodoroBreak}</span><input type="number" id="pomo-break-in" value="${state.pomo.breakMin}" min="1" max="30" style="width:70px"></div>
+    <div class="mt-20"><h4 style="font-size:.85rem;margin-bottom:.4rem">📜 ${ui.pomodoroHistory}</h4>
+      <div class="history-list">${state.pomo.history.length?state.pomo.history.slice(-5).reverse().map(h=>`<div class="history-item"><span>${h.type==='work'?'💼':'☕'} ${h.dur}m</span><span class="opacity-70">${new Date(h.ts).toLocaleTimeString()}</span></div>`).join(''):`<p class="opacity-50">${ui.noHistory}</p>`}</div>
+    </div>
+  </div>
+  <div class="card settings-group">
+    <h3>🤖 API Keys IA <span style="font-size:.68rem;opacity:.6">(solo para traductor en Examen Vial)</span></h3>
+    <p style="font-size:.78rem;opacity:.6;margin-bottom:.8rem">Las claves se guardan únicamente en tu dispositivo y nunca se envían a terceros.</p>
+    <div class="api-key-section">
+      <h4>🔷 Google Gemini API Key</h4>
+      <div style="display:flex;gap:.5rem">
+        <input type="password" id="gemini-key-in" placeholder="AIza..." value="${state.settings.geminiKey||''}" style="flex:1">
+        <button class="btn-sm" id="save-gemini-btn">Guardar</button>
+      </div>
+      <p style="font-size:.72rem;opacity:.5;margin-top:.4rem">Obtén tu clave gratis en <a href="https://aistudio.google.com" target="_blank" style="color:var(--primary-color)">aistudio.google.com</a></p>
+    </div>
+    <div class="api-key-section">
+      <h4>🟠 Groq AI API Key</h4>
+      <div style="display:flex;gap:.5rem">
+        <input type="password" id="groq-key-in" placeholder="gsk_..." value="${state.settings.groqKey||''}" style="flex:1">
+        <button class="btn-sm" id="save-groq-btn">Guardar</button>
+      </div>
+      <p style="font-size:.72rem;opacity:.5;margin-top:.4rem">Obtén tu clave gratis en <a href="https://console.groq.com" target="_blank" style="color:var(--primary-color)">console.groq.com</a></p>
+    </div>
+    <div class="settings-row">
+      <span>Proveedor por defecto</span>
+      <select id="ai-prov-default">
+        <option value="gemini" ${(state.settings.aiProvider||'gemini')==='gemini'?'selected':''}>Google Gemini</option>
+        <option value="groq" ${state.settings.aiProvider==='groq'?'selected':''}>Groq AI</option>
+      </select>
+    </div>
+  </div>
+  <div class="card settings-group">
+    <h3>💾 Datos</h3>
+    <div class="flex gap-10" style="flex-wrap:wrap">
+      <button class="btn" id="exp-btn">Exportar JSON</button>
+      <button class="btn" id="imp-btn">Importar JSON</button>
+      <button class="btn-danger" id="reset-btn">Reset completo</button>
+    </div>
+  </div>
+  <div class="card settings-group">
+    <h3>📜 ${ui.settingsLogs}</h3>
+    <button class="btn-sm" id="clear-logs-btn" style="margin-bottom:.5rem">Limpiar</button>
+    <div class="logs-container">${state.logs.map(l=>`<div class="log-entry ${l.type}">[${new Date(l.ts).toLocaleTimeString()}] ${l.msg}</div>`).join('')}</div>
+  </div>
+  <div class="card settings-group" style="text-align:center">
+    <p style="opacity:.6;font-size:.8rem;margin-bottom:.8rem">© 2026 RUCHK DUVI App<br>Creado por Jaime Andrés Dueñas Vicuña</p>
+    <div style="display:flex;justify-content:center;gap:.8rem;flex-wrap:wrap">
+      <a href="https://www.linkedin.com/in/jaime-andr%C3%A9s-due%C3%B1as-vicu%C3%B1a" target="_blank" class="linkedin-link" style="font-size:.85rem">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="#0a66c2" style="vertical-align:middle;margin-right:4px"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://paypal.me/jaimeDuenas" target="_blank" class="coffee-btn">☕ Buy me a coffee</a>
+    </div>
+    <div style="margin-top:.8rem;display:flex;justify-content:center;gap:.5rem">
+      <a href="#" onclick="showPrivacyPolicy();return false" class="policy-link">🔒 Privacidad</a>
+      <a href="#" onclick="showManual();return false" class="policy-link">📖 Manual</a>
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════════
+   WIRE SETTINGS EXTRA EVENTS
+   ════════════════════════════════════════════════════ */
+function wireSettingsExtra(){
+  const ss=$('set-sound');
+  if(ss) ss.onchange=()=>{ state.settings.sound=ss.checked; LS.set('settings',state.settings); };
+  const sg=$('save-gemini-btn');
+  if(sg) sg.onclick=()=>{ state.settings.geminiKey=$('gemini-key-in').value.trim(); LS.set('settings',state.settings); soundCorrect(); addLog('Gemini key saved','success'); };
+  const sgr=$('save-groq-btn');
+  if(sgr) sgr.onclick=()=>{ state.settings.groqKey=$('groq-key-in').value.trim(); LS.set('settings',state.settings); soundCorrect(); addLog('Groq key saved','success'); };
+  const apd=$('ai-prov-default');
+  if(apd) apd.onchange=()=>{ state.settings.aiProvider=apd.value; LS.set('settings',state.settings); };
+}
+
+/* ════════════════════════════════════════════════════
+   WIRE EXAMEN EXTRA EVENTS
+   ════════════════════════════════════════════════════ */
+function wireExamenExtra(){
+  const atb=$('ai-translate-btn');
+  if(atb) atb.onclick=async()=>{
+    const langSel=$('ai-lang-sel');
+    const provSel=$('ai-prov-sel');
+    if(provSel) state.settings.aiProvider=provSel.value;
+    const res=$('ai-result');
+    if(res){ res.textContent='⏳ Traduciendo…'; }
+    soundClick();
+    const q=appData.examenVial[state.examen.qi];
+    const full=`${q.question}\n\nOpciones:\nA) ${q.options[0]}\nB) ${q.options[1]}\nC) ${q.options[2]}\nD) ${q.options[3]}`;
+    const translated=await translateWithAI(full, langSel?.value||'English');
+    if(res){ res.textContent=translated; }
+    state.examen.lastTranslation=translated;
+  };
+}
+
+/* ════════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════════ */
+function init(){
+  // Load saved state
+  state.lang=LS.get('lang')||'es';
+  state.theme=LS.get('theme')||'dark';
+  state.cal.studyDays=LS.get('studyDays')||[];
+  const sq=LS.get('quiz');
+  if(sq){ state.quiz.qi=sq.qi||0; state.quiz.score=sq.score||0; state.quiz.answers=sq.answers||[]; }
+  const ss=LS.get('settings');
+  if(ss) Object.assign(state.settings, ss);
+  applyTheme();
+
+  // Logo with wheel animation
+  $('logo-btn').onclick=()=>{ animateLogo(); setTimeout(()=>{ state.screen='home'; state.menuOpen=false; render(); },200); };
+
+  // Menu toggle
+  $('menu-toggle').onclick=e=>{ e.stopPropagation(); state.menuOpen=!state.menuOpen; render(); };
+
+  // Theme toggle
+  $('theme-toggle').onclick=()=>{ soundClick(); cycleTheme(); };
+
+  // Side menu links
+  $('side-menu').addEventListener('click',e=>{
+    const a=e.target.closest('[data-screen]');
+    if(a){ e.preventDefault(); soundNav(); state.screen=a.dataset.screen; state.menuOpen=false; render(); }
+  });
+
+  // Close menu on app click
+  app.addEventListener('click',()=>{ if(state.menuOpen){ state.menuOpen=false; render(); }});
+
+  // Add media modal
+  initAddMediaModal();
+
+  // Resume pomodoro if was running
+  if(state.pomo.running) state.pomo.timer=setInterval(tickPomo,1000);
+
+  // Notifications
+  setInterval(()=>{
+    const now=new Date();
+    const ds=now.toISOString().split('T')[0];
+    const ts=now.toTimeString().slice(0,5);
+    state.cal.events.forEach(ev=>{ if(ev.date===ds&&ev.time===ts&&!ev.notified){
+      ev.notified=true;
+      const t=document.createElement('div');
+      t.className='notification-toast';
+      t.innerHTML=`<h4>🔔 ${ev.title}</h4><p>${ev.time}</p><button class="btn-sm" onclick="this.parentElement.remove()">OK</button>`;
+      document.body.appendChild(t);
+      setTimeout(()=>t.remove(),8000);
+    }});
+  },60000);
+
+  fetchRSS();
+
+  // ══════════════════════════════════════════════════════
+  // PWA — Service Worker + Install Banner
+  // Requiere sw.js y manifest.json en la misma carpeta
+  // ══════════════════════════════════════════════════════
+
+  // 1. Capturar beforeinstallprompt ANTES de cualquier async — debe estar al nivel de window
+  // (ya registrado arriba al inicio del script, ver window._pwaPrompt)
+
+  // 2. Registrar SW con rutas absolutas para /RUCK-DUVI/
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/RUCK-DUVI/sw.js', { scope: '/RUCK-DUVI/' })
+      .then(reg => {
+        console.log('[PWA] ✅ SW registrado, scope:', reg.scope);
+        addLog('Service Worker activo · ' + reg.scope, 'success');
+        reg.addEventListener('updatefound', () => addLog('SW: nueva versión disponible','info'));
+      })
+      .catch(err => {
+        console.warn('[PWA] ⚠️ SW error:', err.message);
+        addLog('SW error: ' + err.message, 'error');
+      });
+  }
+
+  // 3. Mostrar banner si ya tenemos el prompt guardado
+  if(window._pwaPrompt) showInstallBanner(window._pwaPrompt);
+
+  render();
+}
+
+// ══════════════════════════════════════════════════════
+// PWA beforeinstallprompt — debe estar FUERA de init()
+// para capturarlo aunque dispare antes que DOMContentLoaded
+// ══════════════════════════════════════════════════════
+window._pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', ev => {
+  ev.preventDefault();
+  window._pwaPrompt = ev;
+  // Si la app ya está inicializada, mostrar banner ahora
+  if(document.readyState === 'complete') showInstallBanner(ev);
+});
+
+// También detectar si ya está instalada
+window.addEventListener('appinstalled', () => {
+  const b = document.getElementById('pwa-install-banner');
+  if(b) b.remove();
+  window._pwaPrompt = null;
+  addLog('✅ App instalada correctamente','success');
+  // Mostrar toast de confirmación
+  const t = document.createElement('div');
+  t.className = 'notification-toast';
+  t.innerHTML = `<h4>✅ ¡App instalada!</h4><p>RUCHK DUVI está en tu pantalla de inicio.</p><button class="btn-sm" onclick="this.parentElement.remove()">OK</button>`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 5000);
+});
+
+function showInstallBanner(prompt){
+  if(document.getElementById('pwa-install-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'pwa-install-banner';
+  banner.style.cssText = [
+    'position:fixed','bottom:5.5rem','left:50%','transform:translateX(-50%)',
+    'background:#0d0d0d','border:1.5px solid #00f3ff','border-radius:14px',
+    'padding:.9rem 1.1rem','display:flex','align-items:center','gap:.8rem',
+    'z-index:4000','box-shadow:0 0 30px rgba(0,243,255,.35)',
+    'font-family:Poppins,sans-serif','font-size:.85rem','color:#e0e0e0',
+    'max-width:360px','width:92%','animation:slideInRight .35s ease-out'
+  ].join(';');
+  banner.innerHTML = `
+    <span style="font-size:1.6rem;flex-shrink:0">📲</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:700;color:#00f3ff;font-family:'Orbitron',sans-serif;font-size:.82rem">Instalar RUCHK DUVI</div>
+      <div style="font-size:.72rem;opacity:.65;margin-top:2px">Añadir a pantalla de inicio · Funciona offline</div>
+    </div>
+    <button id="pwa-install-yes" style="background:linear-gradient(90deg,#00f3ff,#0088ff);color:#000;border:none;
+      padding:.45rem 1rem;border-radius:20px;font-weight:800;cursor:pointer;font-size:.78rem;white-space:nowrap;
+      font-family:'Orbitron',sans-serif;flex-shrink:0">Instalar</button>
+    <button id="pwa-install-no" style="background:none;border:none;color:#555;cursor:pointer;font-size:1.3rem;
+      line-height:1;flex-shrink:0;padding:.2rem">✕</button>`;
+  document.body.appendChild(banner);
+  document.getElementById('pwa-install-yes').onclick = async () => {
+    soundClick();
+    banner.remove();
+    prompt.prompt();
+    const { outcome } = await prompt.userChoice;
+    addLog('PWA install outcome: ' + outcome, outcome==='accepted'?'success':'info');
+    if(outcome==='accepted') window._pwaPrompt = null;
+  };
+  document.getElementById('pwa-install-no').onclick = () => {
+    banner.remove();
+    // Recordar para no molestar, pero guardar prompt
+    LS.set('pwaDismissed', Date.now());
+  };
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

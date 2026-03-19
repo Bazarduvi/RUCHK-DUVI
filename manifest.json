@@ -1,0 +1,21 @@
+{
+  "name": "RUCHK DUVI",
+  "short_name": "RUCHK DUVI",
+  "description": "HK Driving Theory Test · Examen Teórico de Conducir Hong Kong",
+  "start_url": "/RUCK-DUVI/",
+  "scope": "/RUCK-DUVI/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050505",
+  "theme_color": "#00f3ff",
+  "lang": "es",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "/RUCK-DUVI/icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/RUCK-DUVI/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Quiz",        "short_name": "Quiz",   "url": "/RUCK-DUVI/" },
+    { "name": "Examen Vial", "short_name": "Examen", "url": "/RUCK-DUVI/" }
+  ]
+}
